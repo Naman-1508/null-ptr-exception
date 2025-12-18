@@ -7,7 +7,12 @@ export async function GET(request: Request) {
     let files: string[] = [];
 
     try {
-        files = fs.readdirSync(publicDir).filter(file => file.endsWith('.txt'));
+        files = fs.readdirSync(publicDir)
+            .filter(file => file.endsWith('.txt'))
+            .sort((a, b) => {
+                // Natural sort to handle PROGRAM_1, PROGRAM_2, ..., PROGRAM_10 correctly
+                return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+            });
     } catch (e) {
         console.error('Error reading public dir:', e);
     }
