@@ -1,0 +1,106 @@
+12. Write a java program using JSP that takes a name as input and has a submit button, on clicking
+submit button it shows a hello <name> page where name is taken from the request. It shows the
+start time at the right top corner of the page and provides a logout button. On clicking this button,
+it should show a logout page with Thank You <name > message with the duration of usage (hint:
+Use session to store name and time).
+Configure Tomcat in Eclipse
+1. Window → Show View → Servers
+2. “Create new server”
+3. Select Apache Tomcat v9.0
+4. Set directory: /usr/share/tomcat9
+5. Finish
+Create Dynamic Web Project
+1. File → New → Dynamic Web Project
+2. Project Name: JSPSessionDemo
+3. Target Runtime: Apache Tomcat v9.0
+4. Module version: 3.1
+5. Finish
+Create JSP Files
+You will create 3 JSP pages:
+
+Right-click WebContent → New → JSP File
+
+Session1.jsp
+<%@ page language="java" %>
+<html>
+<body>
+<h2>Enter Your Name</h2>
+
+<form action="Session2.jsp" method="get">
+Name: <input type="text" name="uname" required>
+<br><br>
+<input type="submit" value="Submit">
+</form>
+
+</body>
+</html>
+
+Session2.jsp
+<%@ page language="java" import="java.util.*" %>
+
+<%
+String name = request.getParameter("uname");
+
+// Save name and start time into the session
+if (name != null) {
+session.setAttribute("user", name);
+session.setAttribute("startTime", new Date().getTime());
+}
+
+name = (String) session.getAttribute("user");
+long start = (Long) session.getAttribute("startTime");
+
+%>
+
+<html>
+<body>
+
+<p align="right">
+Start Time: <%= new Date(start).toString() %>
+</p>
+
+<h2>Hello <%= name %>!</h2>
+
+<form action="Logout.jsp" method="get">
+<input type="submit" value="Logout">
+</form>
+
+</body>
+</html>
+
+Logout.jsp
+<%@ page language="java" import="java.util.*" %>
+
+<%
+String name = (String) session.getAttribute("user");
+long start = (Long) session.getAttribute("startTime");
+
+long end = new Date().getTime(); // current time
+long duration = end - start; // duration in milliseconds
+
+long seconds = duration / 1000;
+long minutes = duration / (1000 * 60);
+long hours = duration / (1000 * 60 * 60);
+
+session.invalidate(); // logout
+%>
+
+<html>
+<body>
+
+<h2>Thank You <%= name %>!</h2>
+
+Session Duration:
+<br>
+<%= hours %> hours,
+<%= minutes %> minutes,
+<%= seconds %> seconds
+
+</body>
+</html>
+Run the Application
+1. Right-click project → Run As → Run on Server
+2. Select Tomcat v9.0
+3. Open in browser:
+4. http://localhost:8080/JSPSessionDemo/index.jsp
+

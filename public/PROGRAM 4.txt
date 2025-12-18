@@ -1,0 +1,77 @@
+import java.util.Scanner;
+class Person {
+String name;
+int age;
+String gender;
+void read(Scanner sc) {
+System.out.print("Enter name: ");
+name = sc.nextLine();
+System.out.print("Enter age: ");
+age = Integer.parseInt(sc.nextLine());
+System.out.print("Enter gender: ");
+gender = sc.nextLine();
+}
+void show() {
+System.out.println("Name: " + name + ", Age: " + age + ", Gender: " +
+gender);
+}
+}
+class Student extends Person {
+String course;
+int year;
+void read(Scanner sc) {
+super.read(sc);
+System.out.print("Enter course: ");
+course = sc.nextLine();
+System.out.print("Enter year: ");
+year = Integer.parseInt(sc.nextLine());
+}
+void show() {
+super.show();
+System.out.println("Course: " + course + ", Year: " + year);
+}
+}
+class Employee extends Person {
+String dept;
+double salary;
+void read(Scanner sc) {
+super.read(sc);
+System.out.print("Enter department: ");
+dept = sc.nextLine();
+System.out.print("Enter salary: ");
+salary = Double.parseDouble(sc.nextLine());
+}
+void show() {
+super.show();
+System.out.println("Department: " + dept + ", Salary: " + salary);
+}
+}
+public class Main {
+public static void main(String[] args) {
+Scanner sc = new Scanner(System.in);
+Student[] s = new Student[5];
+Employee[] e = new Employee[5];
+System.out.println("Enter details for 5 students:");
+for (int i = 0; i < 5; i++) {
+System.out.println("\nStudent " + (i + 1));
+s[i] = new Student();
+s[i].read(sc);
+}
+System.out.println("\nEnter details for 5 employees:");
+for (int i = 0; i < 5; i++) {
+System.out.println("\nEmployee " + (i + 1));
+e[i] = new Employee();
+e[i].read(sc);
+}
+System.out.println("\n--- Student Details ---");
+for (int i = 0; i < 5; i++) {
+s[i].show();
+System.out.println();
+}
+System.out.println("--- Employee Details ---");
+for (int i = 0; i < 5; i++) {
+e[i].show();
+System.out.println();
+}
+sc.close();
+}}

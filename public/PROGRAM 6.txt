@@ -1,0 +1,92 @@
+import java.util.Scanner;
+abstract class Bank {
+String name;
+int accountNumber;
+double balance;
+
+void readDetails() {
+Scanner sc = new Scanner(System.in);
+System.out.print("\nEnter customer name: ");
+name = sc.nextLine();
+System.out.print("Enter account number: ");
+accountNumber = sc.nextInt();
+System.out.print("Enter account balance: ");
+balance = sc.nextDouble();
+sc.nextLine();
+}
+void displayDetails() {
+System.out.println("\n--- Customer Details ---");
+System.out.println("Name: " + name);
+System.out.println("Account Number: " + accountNumber);
+System.out.println("Balance: " + balance);
+}
+
+abstract void calculateInterest();
+}
+class CityBank extends Bank {
+final double RATE = 5.0;
+@Override
+void calculateInterest() {
+double interest = (balance * RATE) / 100;
+System.out.println("\n[City Bank]");
+displayDetails();
+System.out.println("Rate of Interest: " + RATE + "%");
+System.out.println("Interest Earned: " + interest);
+}
+}
+class SBIBank extends Bank {
+final double RATE = 6.0;
+@Override
+void calculateInterest() {
+double interest = (balance * RATE) / 100;
+System.out.println("\n[SBI Bank]");
+displayDetails();
+System.out.println("Rate of Interest: " + RATE + "%");
+System.out.println("Interest Earned: " + interest);
+}
+}
+class CanaraBank extends Bank {
+final double RATE = 5.5;
+@Override
+void calculateInterest() {
+double interest = (balance * RATE) / 100;
+System.out.println("\n[Canara Bank]");
+displayDetails();
+System.out.println("Rate of Interest: " + RATE + "%");
+System.out.println("Interest Earned: " + interest);
+}
+}
+public class BankDemo {
+public static void main(String[] args) {
+Scanner sc = new Scanner(System.in);
+System.out.println("Select Bank:\n1. City Bank\n2. SBI Bank\n3. Canara
+Bank");
+int choice = sc.nextInt();
+System.out.print("\nEnter number of customers: ");
+int n = sc.nextInt();
+Bank[] customers = new Bank[n];
+for (int i = 0; i < n; i++) {
+System.out.println("\nEnter details for customer " + (i + 1) + ":");
+switch (choice) {
+case 1:
+customers[i] = new CityBank();
+break;
+case 2:
+customers[i] = new SBIBank();
+break;
+case 3:
+customers[i] = new CanaraBank();
+break;
+default:
+System.out.println("Invalid choice!");
+return;
+}
+customers[i].readDetails();
+}
+System.out.println("\n===== Interest Calculation Results =====");
+for (int i = 0; i < n; i++) {
+customers[i].calculateInterest();
+}
+sc.close();
+}
+}

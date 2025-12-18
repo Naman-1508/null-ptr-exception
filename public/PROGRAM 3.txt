@@ -1,0 +1,54 @@
+import java.util.Scanner;
+public class ComplexNumber {
+private double real;
+private double imaginary;
+public ComplexNumber(double real, double imaginary) {
+this.real = real;
+this.imaginary = imaginary;
+}
+
+public ComplexNumber add(ComplexNumber other) {
+return new ComplexNumber(this.real + other.real, this.imaginary +
+other.imaginary);
+}
+public ComplexNumber subtract(ComplexNumber other) {
+return new ComplexNumber(this.real - other.real, this.imaginary -
+other.imaginary);
+}
+public String compare(ComplexNumber other) {
+double mag1 = Math.sqrt(this.real * this.real + this.imaginary *
+this.imaginary);
+double mag2 = Math.sqrt(other.real * other.real + other.imaginary *
+other.imaginary);
+if (mag1 > mag2) {
+return "First complex number is greater in magnitude.";
+} else if (mag1 < mag2) {
+return "Second complex number is greater in magnitude.";
+} else {
+return "Both complex numbers have equal magnitude.";
+}
+public String toString() {
+return real + " + " + imaginary + "i";
+}
+public static void main(String[] args) {
+Scanner scanner = new Scanner(System.in);
+System.out.println("Enter real part of first complex number:");
+double real1 = scanner.nextDouble();
+System.out.println("Enter imaginary part of first complex number:");
+double imag1 = scanner.nextDouble();
+System.out.println("Enter real part of second complex number:");
+double real2 = scanner.nextDouble();
+System.out.println("Enter imaginary part of second complex number:");
+double imag2 = scanner.nextDouble();
+ComplexNumber c1 = new ComplexNumber(real1, imag1);
+ComplexNumber c2 = new ComplexNumber(real2, imag2);
+System.out.println("Complex Number 1: " + c1);
+System.out.println("Complex Number 2: " + c2);
+ComplexNumber sum = c1.add(c2);
+System.out.println("Addition: " + sum);
+ComplexNumber diff = c1.subtract(c2);
+System.out.println("Subtraction: " + diff);
+System.out.println("Comparison: " + c1.compare(c2));
+scanner.close();
+}
+}

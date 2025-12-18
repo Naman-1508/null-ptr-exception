@@ -1,0 +1,33 @@
+class Compare {
+
+    // Compare full strings
+    public static boolean usrstrcmp(String s1, String s2) {
+        return s1.equals(s2);
+    }
+
+    // Compare first n characters
+    public static boolean usrstrcmp(String s1, String s2, int n) {
+        if (n > s1.length() || n > s2.length()) {
+            return false;
+        }
+        return s1.substring(0, n).equals(s2.substring(0, n));
+    }
+}
+
+public class string_compare {
+    public static void main(String[] args) {
+
+        String s1 = "Bhojak";
+        String s2 = "Bhargav";
+
+        if (Compare.usrstrcmp(s1, s2))
+            System.out.println("Strings are equal");
+        else
+            System.out.println("Strings are not equal");
+
+        if (Compare.usrstrcmp(s1, s2, 2))
+            System.out.println("First 2 characters are equal");
+        else
+            System.out.println("First 2 characters are not equal");
+    }
+}

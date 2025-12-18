@@ -1,0 +1,43 @@
+import java.util.Scanner;
+
+class DivideException extends Exception{
+    DivideException(String message){
+        super(message);
+    }
+}
+
+class NegativeException extends Exception{
+    NegativeException(String message){
+        super(message);
+    }
+}
+public class exception_handling {
+    public static double divide(int numerator, int denominator) throws NegativeException,DivideException{
+        if(numerator<0 || denominator<0){
+            throw new NegativeException("Negative number");
+        }
+        if(denominator==0){
+            throw new DivideException("Denominator is zero");
+        }
+        return (double)numerator/denominator;
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        try{
+            System.out.println("Enter first number");
+            int a = sc.nextInt();
+            sc.nextLine();
+            System.out.println("Enter first number");
+            int b = sc.nextInt();
+            double result = divide(a, b);
+            System.out.println("Result is: "+result);
+        }
+        catch(NegativeException e){
+            System.out.println(e.getMessage());
+        }
+        catch(DivideException e){
+            System.out.println(e.getMessage());
+        }
+        sc.close();
+    }
+}

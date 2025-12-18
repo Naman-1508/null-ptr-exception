@@ -1,0 +1,25 @@
+interface Compute{
+    void convert(double value);
+}
+class GBToBytes implements Compute{
+    @Override
+    public void convert(double gb) {
+        double bytes = gb*1024*1024*1024;
+        System.out.println(gb+"GB = "+bytes+" Bytes");
+    }
+}
+class EuroToRupees implements Compute{
+    @Override
+    public void convert(double euro) {
+        double rupees = euro*90;
+        System.out.println(euro+"Euro = "+rupees+" Rupees");
+    }
+}
+public class converter {
+    public static void main(String[] args) {
+        Compute GBToBytes = new GBToBytes();
+        Compute EuroToRupees = new EuroToRupees();
+        GBToBytes.convert(35.23);
+        EuroToRupees.convert(89.80);
+    }
+}

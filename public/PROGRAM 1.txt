@@ -1,0 +1,121 @@
+import java.util.Scanner;
+
+public class MenuProgram {
+
+    static Scanner sc = new Scanner(System.in);
+
+    // a) Quadratic Equation Roots
+    static void quadraticRoots() {
+        System.out.println("Enter coefficients a, b and c:");
+        double a = sc.nextDouble();
+        double b = sc.nextDouble();
+        double c = sc.nextDouble();
+
+        double d = b * b - 4 * a * c;
+
+        if (d > 0) {
+            double r1 = (-b + Math.sqrt(d)) / (2 * a);
+            double r2 = (-b - Math.sqrt(d)) / (2 * a);
+            System.out.println("Roots are real and distinct:");
+            System.out.println("Root 1 = " + r1);
+            System.out.println("Root 2 = " + r2);
+        } else if (d == 0) {
+            double r = -b / (2 * a);
+            System.out.println("Roots are real and equal:");
+            System.out.println("Root = " + r);
+        } else {
+            System.out.println("Roots are imaginary (complex)");
+        }
+    }
+
+    // b) Multiply two arrays
+    static void multiplyArrays() {
+        System.out.println("Enter size of arrays:");
+        int n = sc.nextInt();
+
+        int[] a = new int[n];
+        int[] b = new int[n];
+        int[] c = new int[n];
+
+        System.out.println("Enter elements of first array:");
+        for (int i = 0; i < n; i++)
+            a[i] = sc.nextInt();
+
+        System.out.println("Enter elements of second array:");
+        for (int i = 0; i < n; i++)
+            b[i] = sc.nextInt();
+
+        for (int i = 0; i < n; i++)
+            c[i] = a[i] * b[i];
+
+        System.out.println("Resultant array after multiplication:");
+        for (int i = 0; i < n; i++)
+            System.out.print(c[i] + " ");
+        System.out.println();
+    }
+
+    // c) Bubble sort
+    static void bubbleSort() {
+        System.out.println("Enter number of elements:");
+        int n = sc.nextInt();
+
+        int[] arr = new int[n];
+        System.out.println("Enter elements:");
+        for (int i = 0; i < n; i++)
+            arr[i] = sc.nextInt();
+
+        System.out.println("1. Ascending Order");
+        System.out.println("2. Descending Order");
+        int ch = sc.nextInt();
+
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if ((ch == 1 && arr[j] > arr[j + 1]) ||
+                    (ch == 2 && arr[j] < arr[j + 1])) {
+
+                    int temp = arr[j];
+                    arr[j] = arr[j + 1];
+                    arr[j + 1] = temp;
+                }
+            }
+        }
+
+        System.out.println("Sorted array:");
+        for (int i = 0; i < n; i++)
+            System.out.print(arr[i] + " ");
+        System.out.println();
+    }
+
+    // Main menu
+    public static void main(String[] args) {
+        int choice;
+
+        do {
+            System.out.println("\n------ MENU ------");
+            System.out.println("1. Roots of Quadratic Equation");
+            System.out.println("2. Multiply Two Arrays");
+            System.out.println("3. Bubble Sort");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    quadraticRoots();
+                    break;
+                case 2:
+                    multiplyArrays();
+                    break;
+                case 3:
+                    bubbleSort();
+                    break;
+                case 4:
+                    System.out.println("Exiting program...");
+                    break;
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        } while (choice != 4);
+    }
+}
