@@ -1,0 +1,84 @@
+import java.util.*;
+
+class Employee{
+    String name;
+    int Emp_id;
+    String department;
+    int age;
+    String designation;
+    double salary;
+
+
+    public Employee(String name, int emp_id, String department, int age, String designation, double salary) {
+        this.name = name;
+        Emp_id = emp_id;
+        this.department = department;
+        this.age = age;
+        this.designation = designation;
+        this.salary = salary;
+    }
+
+    void display(){
+        System.out.println("Name:"+name);
+        System.out.println("Emp_id:"+Emp_id);
+        System.out.println("department:"+department);
+        System.out.println("age:"+age);
+        System.out.println("designation:"+designation);
+        System.out.println("salary:"+salary);
+    }
+}
+
+public class EmployeeDatabase_Program2 {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Employee[] employees = new Employee[5];
+
+        for(int i=0;i<5;i++){
+            System.out.println("Enter details of employee"+(i+1)+":");
+            System.out.println("Enter name:");
+            String name = sc.next();
+            System.out.print("Emp ID: ");
+            int empId = sc.nextInt();
+            System.out.print("Department: ");
+            String department = sc.next();
+            System.out.print("Age: ");
+            int age = sc.nextInt();
+            System.out.print("Designation: ");
+            String designation = sc.next();
+            System.out.print("Salary: ");
+            double salary = sc.nextDouble();
+
+            employees[i] = new Employee(name, empId, department, age, designation,salary);
+        }
+        System.out.println("Employee details: ");
+        for(Employee e : employees){
+            e.display();
+        }
+
+        double sum = 0;
+        for(Employee e : employees){
+            if(e.department.equalsIgnoreCase("sales")){
+                sum+=e.salary;
+            }
+        }
+        System.out.println("Sum:"+sum);
+
+        Employee highestpaidmanager = null;
+
+        for(Employee e : employees){
+            if(e.department.equalsIgnoreCase("purchase") && e.designation.equalsIgnoreCase("manager")){
+                if(highestpaidmanager == null || e.salary>highestpaidmanager.salary){
+                    highestpaidmanager=e;
+                }
+            }
+        }
+        if(highestpaidmanager!=null){
+            System.out.println("Highest paid manager in purchase:");
+            highestpaidmanager.display();
+        }
+        else{
+            System.out.println("Not found!");
+        }
+        sc.close();
+    }
+}
