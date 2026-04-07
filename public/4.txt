@@ -1,77 +1,35 @@
-import java.util.Scanner;
-class Person {
-String name;
-int age;
-String gender;
-void read(Scanner sc) {
-System.out.print("Enter name: ");
-name = sc.nextLine();
-System.out.print("Enter age: ");
-age = Integer.parseInt(sc.nextLine());
-System.out.print("Enter gender: ");
-gender = sc.nextLine();
-}
-void show() {
-System.out.println("Name: " + name + ", Age: " + age + ", Gender: " +
-gender);
-}
-}
-class Student extends Person {
-String course;
-int year;
-void read(Scanner sc) {
-super.read(sc);
-System.out.print("Enter course: ");
-course = sc.nextLine();
-System.out.print("Enter year: ");
-year = Integer.parseInt(sc.nextLine());
-}
-void show() {
-super.show();
-System.out.println("Course: " + course + ", Year: " + year);
-}
-}
-class Employee extends Person {
-String dept;
-double salary;
-void read(Scanner sc) {
-super.read(sc);
-System.out.print("Enter department: ");
-dept = sc.nextLine();
-System.out.print("Enter salary: ");
-salary = Double.parseDouble(sc.nextLine());
-}
-void show() {
-super.show();
-System.out.println("Department: " + dept + ", Salary: " + salary);
-}
-}
-public class Main {
-public static void main(String[] args) {
-Scanner sc = new Scanner(System.in);
-Student[] s = new Student[5];
-Employee[] e = new Employee[5];
-System.out.println("Enter details for 5 students:");
-for (int i = 0; i < 5; i++) {
-System.out.println("\nStudent " + (i + 1));
-s[i] = new Student();
-s[i].read(sc);
-}
-System.out.println("\nEnter details for 5 employees:");
-for (int i = 0; i < 5; i++) {
-System.out.println("\nEmployee " + (i + 1));
-e[i] = new Employee();
-e[i].read(sc);
-}
-System.out.println("\n--- Student Details ---");
-for (int i = 0; i < 5; i++) {
-s[i].show();
-System.out.println();
-}
-System.out.println("--- Employee Details ---");
-for (int i = 0; i < 5; i++) {
-e[i].show();
-System.out.println();
-}
-sc.close();
-}}
+4. Imagine you're a cybersecurity analyst tasked with assessing the security of a newly developed e-commerce website. You would utilize Burp suite and perform following activities to identify and mitigate security flaws in the web application. Start by describing the setup process for Burp Suite, including configuring proxy settings and initiating automated scans to detect common vulnerabilities like SQL Injection.
+i. Manual Testing of SQL Injection 
+ii.Proxy Attack with Burp Suite.
+
+i. Manual testing for SQL injection: -
+Setting mutillidae app correctly for SQL injection Vulnerability Testing
+Go to the target machine(Metaspoiltable 2)—In the terminal type below commands 
+cd /var/www/mutillidae sudo nano config.inc
+Ensure dbname=owasp10 instead of Metasploit, 
+Then save(ctrl+X, Y and enter ) and exit.
+In the kali linux browser 
+192.168.45.136  
+Go to mutillidae and enter the username as ‘ and password field is empty , click on enter.
+It displays errors, which indicates web application is vulnerable It displays the query in the Diagnotic information.
+•	Now again click Login/Register enter username as admin, Password as blahblah ‘ OR 6=6# Then you can observe it is logged in as admin.
+•	Now trying with username as admin ‘ # and password field must be empty, still you can observe it is logging in as admin.
+•	In mutillidae page, click on  and
+Enter username=admin and password =adminpass , click on view account details, Then Results for admin. 1 records found would be displayed
+Username=admin 
+Password=adminpass Signature= Monkey
+•	Now for SQLi
+Enter username=admin and password= ‘ OR 1=’1--
+Click on view account details. Then you would observe Results for admin. 
+16 records found details…
+i) Proxy Attack with Burp suite.
+•	Start both the Kali Linux virtual machine and the Metasploitable 2 virtual machine to ensure they are up and running.
+•	Navigate to the "Applications" menu in Kali Linux and launch the Burp Suite application. 
+•	After Burp Suite has launched, set up the proxy configuration.
+•	Download the Burp Suite certificate and import it into the relevant certificate store. 
+•	Access the proxy settings within Burp Suite and configure a manual proxy setup with the HTTP proxy set to 127.0.0.1 and port number 8080. Confirm the settings by clicking "OK." 
+•	Open the Mutillidae application and Login using the credentials: username - "john" and password - "passwd". Before clicking on the login button, activate the Intercept feature in Burp Suite. Proceed to click on the login button in Mutillidae.
+•	Check the Burp Suite application to verify that it captured the login request, including the username and password information.
+•	Modify the username and password to "admin" and "adminpass" respectively within Burp Suite. Then, click "Forward" to send the modified request.
+•	Once the modified request is forwarded, observe in the Mutillidae application that the login is successful, indicating that the credentials have been changed to admin/adminpass. 
+•	Within the Burp Suite application, navigate to the "Target" tab to review the intercepted information from the target machine.
