@@ -1,0 +1,20 @@
+3. Imagine a legal firm handling contracts for clients remotely. Let’s say a client, Mr. 
+John, needs to sign a contract for a property purchase. how could Cryptool be applied 
+to digitally sign a contract document, authenticate its validity, and ensure the secure 
+storage of both the digital signature and the original document? Demonstrate the use 
+of digital signatures using cryptool by performing following things: 
+● Creation of signature 
+● Storing the signature 
+● Verifying the signature 
+A digital signature is a secure, cryptographic, electronic stamp of authentication for digital documents, 
+emails, or transactions. It guarantees the document’s integrity (has not been tampered with) and verifies the 
+signer's identity using a certificate-based Public Key Infrastructure (PKI). 
+Demo: - 
+• Download Cryptool2 on windows machine. 
+https://www.cryptool.org/en/ct2/downloads Download 
+.exe stable version(165.65MB) 
+• Install Cryptool 
+• Perform Encryption and Decryption using RSA algorithm and Create hashes for the 
+file using SHA algorithm 
+Encryption & Decryption 
+Note: Add screenshots of actual execution for atleast 2 encryption and 2 hashes in record
