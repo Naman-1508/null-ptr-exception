@@ -1,35 +1,185 @@
-4. Imagine you're a cybersecurity analyst tasked with assessing the security of a newly developed e-commerce website. You would utilize Burp suite and perform following activities to identify and mitigate security flaws in the web application. Start by describing the setup process for Burp Suite, including configuring proxy settings and initiating automated scans to detect common vulnerabilities like SQL Injection.
-i. Manual Testing of SQL Injection 
-ii.Proxy Attack with Burp Suite.
+Part A:
+Experiment 3: Disassemble the suspicious binary and analyse its code flow to determine what
+actions the malware is programmed to perform. Identify any suspicious API calls or functions
+it uses that could indicate malicious intent.
+Tool: Ghidra
 
-i. Manual testing for SQL injection: -
-Setting mutillidae app correctly for SQL injection Vulnerability Testing
-Go to the target machine(Metaspoiltable 2)—In the terminal type below commands 
-cd /var/www/mutillidae sudo nano config.inc
-Ensure dbname=owasp10 instead of Metasploit, 
-Then save(ctrl+X, Y and enter ) and exit.
-In the kali linux browser 
-192.168.45.136  
-Go to mutillidae and enter the username as ‘ and password field is empty , click on enter.
-It displays errors, which indicates web application is vulnerable It displays the query in the Diagnotic information.
-•	Now again click Login/Register enter username as admin, Password as blahblah ‘ OR 6=6# Then you can observe it is logged in as admin.
-•	Now trying with username as admin ‘ # and password field must be empty, still you can observe it is logging in as admin.
-•	In mutillidae page, click on  and
-Enter username=admin and password =adminpass , click on view account details, Then Results for admin. 1 records found would be displayed
-Username=admin 
-Password=adminpass Signature= Monkey
-•	Now for SQLi
-Enter username=admin and password= ‘ OR 1=’1--
-Click on view account details. Then you would observe Results for admin. 
-16 records found details…
-i) Proxy Attack with Burp suite.
-•	Start both the Kali Linux virtual machine and the Metasploitable 2 virtual machine to ensure they are up and running.
-•	Navigate to the "Applications" menu in Kali Linux and launch the Burp Suite application. 
-•	After Burp Suite has launched, set up the proxy configuration.
-•	Download the Burp Suite certificate and import it into the relevant certificate store. 
-•	Access the proxy settings within Burp Suite and configure a manual proxy setup with the HTTP proxy set to 127.0.0.1 and port number 8080. Confirm the settings by clicking "OK." 
-•	Open the Mutillidae application and Login using the credentials: username - "john" and password - "passwd". Before clicking on the login button, activate the Intercept feature in Burp Suite. Proceed to click on the login button in Mutillidae.
-•	Check the Burp Suite application to verify that it captured the login request, including the username and password information.
-•	Modify the username and password to "admin" and "adminpass" respectively within Burp Suite. Then, click "Forward" to send the modified request.
-•	Once the modified request is forwarded, observe in the Mutillidae application that the login is successful, indicating that the credentials have been changed to admin/adminpass. 
-•	Within the Burp Suite application, navigate to the "Target" tab to review the intercepted information from the target machine.
+Static malware analysis involves examining an executable without running it to understand its
+behavior. Disassembly and decompilation reveal program logic, API usage, and control flow,
+which help determine whether the binary performs malicious actions such as persistence, file
+manipulation, or network communication.
+
+PART A: Creating the Suspicious Binary (Kali Linux VM)
+
+Step 1: Install MinGW-w64 (Kali Linux VM)
+sudo apt update
+sudo apt install mingw-w64
+
+Step 2: Create Working Directory
+mkdir ghidra_lab
+cd ghidra_lab
+
+Step 3: Create Suspicious Source code
+
+Step 3: Create Suspicious Source Code
+nano sample.c
+#include &lt;windows.h&gt;
+#include &lt;stdio.h&gt;
+int main() {
+HKEY hKey;
+HANDLE hFile;
+DWORD bytesWritten;
+char data[] = &quot;System initialized\n&quot;;
+// Create a hidden file (suspicious behavior)
+hFile = CreateFileA(&quot;C:\\Temp\\syslog.txt&quot;, GENERIC_WRITE, 0,NULL,CREATE_ALWAYS,
+FILE_ATTRIBUTE_HIDDEN, NULL);
+WriteFile(hFile, data, sizeof(data), &amp;bytesWritten, NULL);
+CloseHandle(hFile);
+// Add registry persistence
+
+RegCreateKeyExA(HKEY_CURRENT_USER,
+&quot;Software\\Microsoft\\Windows\\CurrentVersion\\Run&quot;, 0,NULL,0,KEY_WRITE,NULL,&amp;hKey,
+NULL);
+RegSetValueExA(hKey,&quot;SystemUpdater&quot;, 0,REG_SZ,(BYTE*)&quot;C:\\Temp\\sample.exe&quot;, 20);
+RegCloseKey(hKey);
+MessageBoxA(NULL, &quot;Service Started&quot;, &quot;System&quot;, MB_OK);
+return 0;
+}
+Save and exit.
+
+Step 4: Compile Windows Executable in Kali Linux VM
+x86_64-w64-mingw32-gcc sample.c -o sample.exe
+
+Step 5: Verify Binary Type
+file sample.exe
+Expected output:
+PE32+ executable (console) x86-64, for MS Windows
+✔ Suspicious binary successfully created.
+
+PART B: Preparing Ghidra (Kali Linux)
+Then before installing Ghidra, make sure
+Jdk is installed
+sudo apt install -y openjdk-21-jdk
+Step 7: Install Ghidra
+sudo apt install -y ghidra
+Step 7: Launch Ghidra
+ghidra
+
+Step 8: Create a New Project
+1. File → New Project
+2. Select Non-Shared Project
+3. Project name: Malware_Ghidra_Analysis
+4. Choose workspace directory
+
+Step 9: Import the Suspicious Binary
+1. File → Import File
+2. Select sample.exe
+3. Format: PE
+4. Click OK
+
+Step 10: Analyze the Binary
+When prompted:
+✔ Analyze
+✔ Default analyzers
+✔ PE analyzers
+✔ Decompiler
+Click Analyze
+
+PART C: Initial Binary Inspection
+1. Symbol Tree (Functions &amp; Imports)
+How to open
+Menu bar:
+Window → Symbol Tree
+What you observe
+
+This shows:
+ Functions
+ Imported APIs
+ Exported symbols
+ Labels
+Expand:
+Symbol Tree
+├── Functions
+├── Imports
+└── Labels
+What to check for your sample.exe
+Under Imports, you should see APIs like:
+CreateFileA
+WriteFile
+CloseHandle
+RegCreateKeyExA
+RegSetValueExA
+MessageBoxA
+These APIs reveal the capabilities of the executable.
+Example:
+API Meaning
+CreateFileA File creation
+WriteFile Writing data
+RegCreateKeyEx
+A
+
+Registry key
+creation
+
+RegSetValueExA Registry persistence
+MessageBoxA Popup message
+
+2. Defined Strings
+How to open
+Window → Defined Strings
+What you observe
+This panel shows all text strings inside the executable.
+For your program you should see:
+System Initialized
+C:\Temp\syslog.txt
+Software\Microsoft\Windows\CurrentVersion\Run
+SystemUpdater
+C:\Temp\Sample.exe
+Service Started
+System
+Why it is important
+Strings reveal:
+ file paths
+ registry keys
+ messages
+ commands
+ URLs
+Analysts often start analysis here.
+
+3. Decompiler Window
+How to open
+Window → Decompiler
+What you observe
+This shows C-like reconstructed code from machine instructions.
+Example you might see:
+
+CreateFileA(&quot;C:\\Temp\\syslog.txt&quot;, ...);
+WriteFile(...);
+RegCreateKeyExA(...);
+RegSetValueExA(...);
+MessageBoxA(...);
+This helps you understand the program without reading assembly.
+
+4. Listing Window (Assembly View)
+How to open
+Window → Listing
+What you observe
+This shows the actual assembly instructions of the program.
+Example:
+PUSH offset &quot;C:\\Temp\\syslog.txt&quot;
+CALL CreateFileA
+CALL WriteFile
+CALL RegCreateKeyExA
+This is the real machine-level program execution.
+Malware analysts verify behavior here.
+
+RESULT
+The suspicious binary was successfully disassembled using Ghidra. Analysis of its code flow and
+API calls revealed that it creates hidden files, establishes registry persistence, and executes
+automatically, indicating malicious intent.
+
+CONCLUSION
+Ghidra static analysis revealed that the analyzed binary performs unauthorized file system
+modification and registry persistence using Windows API calls. These behaviors are
+characteristic of malware designed to maintain persistence and operate stealthily on infected
+systems.

