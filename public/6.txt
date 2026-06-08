@@ -19,7 +19,7 @@ Then add msfadmin and save the file.
 Hydra tool is used for password cracking. Type the below command in kali linux terminal for cracking the
 password (Dictionary attack), specify the path of 𝑢𝑛𝑖𝑥_𝑝𝑎𝑠𝑠𝑤𝑜𝑟𝑑. 𝑡𝑥𝑡 and IP address of metaspoiltable2 VM.
 ℎ𝑦𝑑𝑟𝑎 − 𝑙 𝑚𝑠𝑓𝑎𝑑𝑚𝑖𝑛 − 𝑃 /𝑜𝑝𝑡/𝑚𝑒𝑡𝑎𝑠𝑝𝑙𝑜𝑖𝑡 𝑓𝑟𝑎𝑚𝑒𝑤𝑜𝑟𝑘/ 𝑒𝑚𝑏𝑒𝑑𝑑𝑒𝑑 / 𝑓𝑟𝑎𝑚𝑒𝑤𝑜𝑟𝑘/ 𝑑𝑎𝑡𝑎/
-𝑤𝑜𝑟𝑑𝑙𝑖𝑠𝑡𝑠/𝑢𝑛𝑖𝑥_𝑝𝑎𝑠𝑠𝑤𝑜𝑟𝑑𝑠. 𝑡𝑥𝑡
+𝑤𝑜𝑟𝑑𝑙𝑖𝑠𝑡𝑠/𝑢𝑛𝑖𝑥_𝑝𝑎𝑠𝑠𝑤𝑜𝑟𝑑𝑠. 𝑡𝑥𝑡 ftp://<Metasploit_IP>
 Now it will match the passwords from the dictionary, once the exact match is found. it will display password
 matched.
 Now get FTP connection to target machine (Metaspoiltable 2) by using below command
