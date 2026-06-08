@@ -38,7 +38,7 @@ b. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 1 − 𝑐 1 − 𝑖 5 192. 168. 6
 c. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 1 −− 𝑓𝑎𝑠𝑡𝑒𝑟 192. 168. 62. 133
 d. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 1 −− 𝑓𝑎𝑠𝑡𝑒𝑟 192. 168. 62. 133
 e. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 1 − 𝑎 192. 168. 62. 139 192. 168. 62. 133
-f. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 1 –𝑟𝑎𝑛𝑑 − 𝑠𝑜𝑢𝑟𝑐𝑒 192. 168. 62. 133
+f. 𝑠𝑢𝑑𝑜 ℎ𝑝𝑖𝑛𝑔3 − 1 –-𝑟𝑎𝑛𝑑 − 𝑠𝑜𝑢𝑟𝑐𝑒 192. 168. 62. 133
 TCP 3-way handshake
 For SYN Flood Attack, use below commands. Ensure Kali Linux and Metaspoiltable2 are up and running.
 In kali linux browser, type metaspoiltable 2 IP to launch DVWA application, login.
