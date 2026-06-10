@@ -1,80 +1,79 @@
-2a. As a member of Blue team experts in Monitoring and Technical Support of a medium
-sized company, you have been asked to assess the security posture of the internal network.
-Use Nmap for network discovery, Port scanning, Service version detection and vulnerability
-detection. Then Document your findings, including the identified vulnerabilities, their
-severity levels.
-Nmap ("Network Mapper") is a free and open source utility for network discovery and security
-auditing. Many systems and network administrators also find it useful for tasks such as
-network inventory, managing service upgrade schedules, and monitoring host or service
-uptime. Nmap uses raw IP packets in novel ways to determine what hosts are available on the
-network, what services (application name and version) those hosts are offering, what operating
-systems (and OS versions) they are running, what type of packet filters/firewalls are in use,
-and dozens of other characteristics. It was designed to rapidly scan large networks, but works
-fine against single hosts. Nmap runs on all major computer operating systems, and official
-binary packages are available for Linux, Windows, and Mac OS X.
-Nmap Scanning:
-• Open Kali Linux and the Metasploitable2 virtual machine.
-• Obtain the IP address of the target machine (Metasploitable2 VM).
-• Open the terminal in Kali Linux.
-• Perform scanning using the following commands with nmap:
-1. 𝑛𝑚𝑎𝑝 192. 168. 62. 129
-2. 𝑠𝑢𝑑𝑜 𝑛𝑚𝑎𝑝 − 𝑣 192. 168. 62. 129 (𝑣 − 𝑣𝑒𝑟𝑏𝑜𝑠𝑒 − 𝑑𝑒𝑡𝑎𝑖𝑙𝑒𝑑 𝑜𝑢𝑡𝑝𝑢𝑡)
-3. 𝑚𝑎𝑛 𝑛𝑚𝑎𝑝
-4. 𝑛𝑚𝑎𝑝 − 𝑉 192. 168. 62. 129 (𝑉 − 𝑣𝑒𝑟𝑠𝑖𝑜𝑛)
-5. 𝑛𝑚𝑎𝑝 192. 168. 62. 129 192. 168. 62. 130
-6. 𝑛𝑚𝑎𝑝 192. 168. 62. 0/24 −− 𝑒𝑥𝑐𝑙𝑢𝑑𝑒 192. 168. 62. 130
-7. 𝑛𝑚𝑎𝑝 −− 𝑜𝑝𝑒𝑛 192. 168. 62. 129 (𝑠ℎ𝑜𝑤𝑖𝑛𝑔 𝑜𝑛𝑙𝑦 𝑡ℎ𝑒 𝑜𝑝𝑒𝑛 𝑝𝑜𝑟𝑡𝑠)
-8. 𝑛𝑚𝑎𝑝 − 𝐴 192. 168. 62. 129 (𝐴𝑔𝑔𝑟𝑒𝑠𝑠𝑖𝑣𝑒 𝑠𝑐𝑎𝑛)
-9. 𝑛𝑚𝑎𝑝 − 𝑠𝐴 192. 168. 62. 129
-(𝑇ℎ𝑒 𝑝𝑎𝑐𝑘𝑒𝑡𝑠 𝑠𝑒𝑛𝑡 𝑡𝑜 𝑡𝑎𝑟𝑔𝑒𝑡 𝑚𝑎𝑐ℎ𝑖𝑛𝑒 𝑎𝑟𝑒 𝑔𝑒𝑡𝑡𝑖𝑛𝑔 𝑓𝑖𝑙𝑡𝑒𝑟𝑒𝑑 𝑜𝑟 𝑛𝑜𝑡)
-10.𝑛𝑚𝑎𝑝 − 𝑝 80 192. 168. 62. 129(𝑃𝑜𝑟𝑡 80)
-11.𝑛𝑚𝑎𝑝 −− 𝑝𝑎𝑐𝑘𝑒𝑡 − 𝑡𝑟𝑎𝑐𝑒 192. 168. 62. 129 (𝐶𝑜𝑚𝑝𝑙𝑒𝑡𝑒 𝑡𝑟𝑎𝑐𝑖𝑛𝑔 𝑜𝑓 𝑝𝑎𝑐𝑘𝑒𝑡𝑠)
-12.𝑛𝑚𝑎𝑝 −− 𝑡𝑜𝑝 − 𝑝𝑜𝑟𝑡𝑠 10 192. 168. 62. 129
-OS Detection:
-• 𝑛𝑚𝑎𝑝 − 𝑂 192. 168. 62. 129
-• 𝑛𝑚𝑎𝑝 − 𝑣 − 𝑂 192. 168. 62. 129 —𝑟𝑒𝑣𝑒𝑎𝑙𝑖𝑛𝑔 𝑎𝑑𝑑𝑖𝑡𝑖𝑜𝑛𝑎𝑙 𝑖𝑛𝑓𝑜..
-• 𝑛𝑚𝑎𝑝 − 𝑂 −− 𝑜𝑠𝑠𝑐𝑎𝑛 − 𝑔𝑢𝑒𝑠𝑠 192. 168. 62. 129 (𝑝𝑟𝑜𝑝𝑜𝑠𝑒𝑑 𝑜𝑝𝑡𝑖𝑜𝑛)
-Service Detection:-
-• 𝑛𝑚𝑎𝑝 − 𝑠𝑉 − 𝑂 192. 168. 62. 129
-• 𝑛𝑚𝑎𝑝 − 𝑠𝑉 −− 𝑣𝑒𝑟𝑠𝑖𝑜𝑛 − 𝑡𝑟𝑎𝑐𝑒 192. 168. 62. 129
-Advanced Scan:-
-• 𝑛𝑚𝑎𝑝 − 𝑠𝑆 192. 168. 62. 130 (𝑇𝐶𝑃 𝑆𝑦𝑛 𝑆𝑐𝑎𝑛𝑛𝑖𝑛𝑔)
-• 𝑛𝑚𝑎𝑝 − 𝑠𝑇 192. 168. 62. 129 (𝑇𝐶𝑃 𝐶𝑜𝑛𝑛𝑒𝑐𝑡 𝑠𝑐𝑎𝑛)
-• 𝑛𝑚𝑎𝑝 − 𝑠𝑈 192. 168. 62. 129(𝑈𝐷𝑃 𝑠𝑐𝑎𝑛𝑠..)
-• 𝑠𝑢𝑑𝑜 𝑛𝑚𝑎𝑝 − 𝑠𝑁 192. 168. 62. 129 (𝑇𝐶𝑃 𝑛𝑢𝑙𝑙 𝑆𝑦𝑛𝑐 𝑠𝑐𝑎𝑛)
-• 𝑠𝑢𝑑𝑜 𝑛𝑚𝑎𝑝 − 𝑠𝐹 192. 168. 62. 129(𝑇𝐶𝑃 𝐹𝐼𝑁 𝑠𝑐𝑎𝑛—𝑆𝑒𝑡𝑡𝑖𝑛𝑔 𝑡ℎ𝑒 𝐹𝐼𝑁 𝑏𝑖𝑡)
-Custom scan:-
-nmap -sS --scanflags SYNFIN -T4 www.google.com nmap -sO
-192.168.62.129(IP protocol scan)
-Send Ethernet packets:
-𝑛𝑚𝑎𝑝 −− 𝑠𝑒𝑛𝑑 − 𝑒𝑡ℎ 192. 168. 62. 129
-Send IP packets
-𝑛𝑚𝑎𝑝 −− 𝑠𝑒𝑛𝑑 − 𝑖𝑝 192. 168. 62. 129
-2b. Imagine you are a member of Red Team in a company, you have been assigned a
-penetration testing task to assess the security of a corporate network using Kali Linux and
-the Metasploit framework. Outline a step-by-step process for utilizing Metasploit to identify
-and exploit vulnerabilities within the network.
-Ensure both the Kali Linux and Metasploitable2 virtual machines are up and running.
-Open Kali Linux terminal, type following cmds
-# 𝑚𝑠𝑓𝑢𝑝𝑑𝑎𝑡𝑒 —"Use this if metaspoilt-framework is more than two weeks old. Run msfupdate to get
-latest framework”
-➢ 𝑚𝑠𝑓𝑐𝑜𝑛𝑠𝑜𝑙𝑒
-➢ 𝑢𝑠𝑒 𝑒𝑥𝑝𝑙𝑜𝑖𝑡/𝑢𝑛𝑖𝑥/𝑓𝑡𝑝/𝑣𝑠𝑓𝑡𝑝𝑑_234_𝑏𝑎𝑐𝑘𝑑𝑜𝑜𝑟
-➢ 𝑠ℎ𝑜𝑤 𝑜𝑝𝑡𝑖𝑜𝑛𝑠
-➢ 𝑠𝑒𝑡 𝑅𝐻𝑂𝑆𝑇 192. 168. 62. 129
-➢ 𝑒𝑥𝑝𝑙𝑜𝑖𝑡
-➢ It will open the shell of target IP (metaspoiltable vm)
-➢Create a file say 𝑠𝑎𝑚𝑝𝑙𝑒. 𝑡𝑥𝑡 with some contents, copy the file to another new file.
-➢ Now goto Metaspoiltable VM 2 and check the same file contents.
-➢ Even the sensitive details such contents of /𝑒𝑡𝑐/𝑝𝑎𝑠𝑠𝑤𝑑 file also can be accessed.
-Database Commands for Connection & Status
-These commands are used within the 𝑚𝑠𝑓𝑐𝑜𝑛𝑠𝑜𝑙𝑒 prompt to interact with the connected database.
- 𝑑𝑏_𝑠𝑡𝑎𝑡𝑢𝑠: Checks the connection status to the database.
- 𝑑𝑏_𝑐𝑜𝑛𝑛𝑒𝑐𝑡 [𝑢𝑠𝑒𝑟: 𝑝𝑎𝑠𝑠𝑤𝑜𝑟𝑑@ℎ𝑜𝑠𝑡: 𝑝𝑜𝑟𝑡/𝑑𝑎𝑡𝑎𝑏𝑎𝑠𝑒]: Manually connects to a specific database.
- 𝑑𝑏_𝑑𝑖𝑠𝑐𝑜𝑛𝑛𝑒𝑐𝑡: Disconnects from the current database connection.
-Data Collection & Management
- 𝑑𝑏_𝑛𝑚𝑎𝑝 [𝑛𝑚𝑎𝑝 𝑜𝑝𝑡𝑖𝑜𝑛𝑠] [𝐼𝑃 𝑟𝑎𝑛𝑔𝑒/ℎ𝑜𝑠𝑡]: Runs an Nmap scan and automatically saves the results
-(hosts, services) to the database.
- 𝑑𝑏_𝑖𝑚𝑝𝑜𝑟𝑡 [𝑝𝑎𝑡ℎ/𝑡𝑜/𝑓𝑖𝑙𝑒. 𝑥𝑚𝑙]: Imports scan results from an external file (supports Nmap XML,
-Nessus, etc.) into the database.
- 𝑑𝑏_𝑒𝑥𝑝𝑜𝑟𝑡 − 𝑓 𝑥𝑚𝑙 [𝑝𝑎𝑡ℎ/𝑡𝑜/𝑓𝑖𝑙𝑒. 𝑥𝑚𝑙]
+EXPERIMENT 1.b.
+you have received a suspicious binary file named suspicious.bin,
+which is suspected to be a Windows-based malware sample. Without
+executing the file, perform static analysis to determine whether it
+belongs to a potential malware family such as a Trojan or backdoor.
+The file has been derived from an existing Windows PE executable
+and modified to include suspicious API calls and persistence-related
+strings commonly associated with malicious behavior (e.g., process
+injection APIs, command execution strings, registry autorun keys).
+Tool: YARA
+
+Important Disclaimer: We will NOT use live malware binaries. That would be unsafe and
+unethical. Instead, we use malware signatures embedded into test binaries.
+
+Procedure (Steps for performing experiment)
+In Kali Linux VM
+ Update and Upgrade
+sudo apt update &amp;&amp; sudo apt upgrade -y
+Note: If already updated and upgraded this cmd can be ignored.
+ Install yara
+sudo apt install yara -y
+ yara version
+yara --version
+1. Use existing windows PE binary
+Kali includes windows binary here
+ls /usr/share/windows-resources/binaries/
+
+There are some binaries which are available, copy one here:
+cp /usr/share/windows-resources/binaries/nc.exe suspicious.bin
+chmod -x suspicious.bin
+
+2. Then verify whether it is a Windows PE file
+file suspicious.bin
+the expected output must be:
+suspicious.bin: PE32 executable for MS Windows 4.00(Console), Intel i386, 4 sections
+
+3. Now create a generic windows yara rules:
+
+vi windows_malware_generic.yar
+
+rule windows_malware_generic
+{
+meta:
+author = &quot;Students”
+description = &quot;Generic Windows PE malware detection using static indicators&quot;
+malware_type = &quot;Trojan / Backdoor (Generic)&quot;
+strings:
+$api1 = &quot;CreateRemoteThread&quot; ascii nocase
+$api2 = &quot;VirtualAllocEx&quot; ascii nocase
+$api3 = &quot;WriteProcessMemory&quot; ascii nocase
+$cmd = &quot;cmd.exe&quot; ascii nocase
+$reg = &quot;CurrentVersion\\Run&quot; ascii nocase
+condition:
+uint16(0) == 0x5A4D and
+any of ($api*) or ($cmd or $reg)
+}
+4. Then add these strings
+echo “CreateRemoteThread” &gt;&gt; suspicious.bin
+echo “cmd.exe” &gt;&gt;suspicious.bin
+echo “VirtualAllocEx” &gt;&gt;suspicious.bin
+
+Then verify by using below cmd:
+strings -a suspicious.bin |grep -Ei “createremotethread|cmd.exe”
+Then output shows like below
+
+createRemoteThread
+Cmd.exe
+
+Then Run Yara against binary file
+yara windows_malware_generic.yar suspicious.bin
+Possible Results
+ No output → benign PE (expected for nc.exe)
+ Rule name printed → suspicious indicators found
+Both results are valid for the experiment.
+
+Result
+ The suspicious binary contains known malware-related strings
+ YARA rules successfully detected the file based on static signatures
+ No execution of the file was required.

