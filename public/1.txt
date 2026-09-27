@@ -1,67 +1,68 @@
-1. Simple malware behavior simulation using Python
+# Experiment 1: Create Docker Image – Hello World
 
-a. Verify Python Installation
-python3 –version
-b. Create Python Program
-mkdir malware_lab
-cd malware_lab
-vi system_info_malware.py
-import platform
-import socket
-from datetime import datetime
-file = open(&quot;sysinfo_log.txt&quot;, &quot;a&quot;)
-file.write(&quot;System Information\n&quot;)
-file.write(&quot;Date &amp; Time: &quot; + str(datetime.now()) + &quot;\n&quot;)
-file.write(&quot;System: &quot; + platform.system() + &quot;\n&quot;)
-file.write(&quot;Node Name: &quot; + platform.node() + &quot;\n&quot;)
-file.write(&quot;Release: &quot; + platform.release() + &quot;\n&quot;)
-file.write(&quot;Version: &quot; + platform.version() + &quot;\n&quot;)
-file.write(&quot;Machine: &quot; + platform.machine() + &quot;\n&quot;)
-file.write(&quot;Processor: &quot; + platform.processor() + &quot;\n&quot;)
-file.write(&quot;IP Address: &quot; +
-socket.gethostbyname(socket.gethostname()) + &quot;\n&quot;)
-file.write(&quot;===============================\n\n&quot;)
-file.close()
+## Objective
 
-c. Execute the Program
-python3 system_info_malware.py
-d. View Output
-cat sysinfo_log.txt
-Creates log file and collects details (Malware Collects details
-before launching attacks)
+Create a simple Python program and run it inside a Docker container.
 
-2. Simulated malware Network Beaconing
-a. Go to lab directory and create python program.
-cd ~/malware_lab
-vi network_beacon_simulation.py
+## Experiment-1: Create Docker Image
 
-import time
-import socket
-from datetime import datetime
+**Login:** RIT-ADMIN
+**Password:** rit@2025
 
-server = &quot;example.com&quot;
-port = 80
-log_file = &quot;network_activity.log&quot;
+### Step 1: Create a folder Hello-world in Home folder
 
-def simulate_beacon():
-try:
+```bash
+gedit app.py
+```
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.settimeout(3)
-s.connect((server, port))
-s.close()
-return &quot;Connection successful&quot;
-except:
-return &quot;Connection failed&quot;
+Open Terminal:
 
-for i in range(5):
-result = simulate_beacon()
-with open(log_file, &quot;a&quot;) as f:
-f.write(f&quot;{datetime.now()} - Beacon attempt to {server}:{port} -
-{result}\n&quot;)
-time.sleep(5)
+```bash
+cd hello-world
+gedit app.py
+```
 
-b. Run the program
-python3 network_beacon_simulation.py
-c. View Output log
-cat network_activity.log
+#### 1. Create a simple Python program
+
+Make a:
+
+```python
+print("Hello, World from Docker!")
+```
+
+### Step 2: Write a Dockerfile
+
+Create a file named `Dockerfile` in the same folder:
+
+```bash
+gedit Dockerfile
+```
+
+```dockerfile
+FROM python:3.10-slim
+WORKDIR /app
+COPY . /app
+CMD ["python", "app.py"]
+```
+
+### Step 3: Build the Docker image
+
+Open a terminal in the folder and run:
+
+```bash
+docker build -t hello-docker .
+```
+
+### Step 4: Run the container
+
+Now run the image:
+
+```bash
+docker run hello-docker
+```
+
+**Output should be:**
+
+```text
+Hello, World from Docker!
+```
