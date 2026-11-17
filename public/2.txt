@@ -1,75 +1,46 @@
-# Experiment 2: Arithmetic Calculator in Docker
+Program-8: Prime Number Checker
 
-## Objective
+Python File: prime.py
 
-Python calculator inside Docker.
+def is_prime(n):
+    if n <= 1:
+        return False
 
-* Build a simple arithmetic calculator app using Python.
-* Dockerize the app and run it inside a container.
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
 
-## Steps
+    return True
 
-### 1. calculator.py
 
-```python
-def calculator():
-    print("Simple Arithmetic Calculator")
-    a = float(input("Enter first number: "))
-    b = float(input("Enter second number: "))
-    print("Select operation:\n1. Add\n2. Subtract\n3. Multiply\n4. Divide")
-    choice = input("Enter choice (1/2/3/4): ")
+n = int(input("Enter a number: "))
 
-    if choice == '1':
-        print(f"Result: {a + b}")
-    elif choice == '2':
-        print(f"Result: {a - b}")
-    elif choice == '3':
-        print(f"Result: {a * b}")
-    elif choice == '4':
-        if b != 0:
-            print(f"Result: {a / b}")
-        else:
-            print("Cannot divide by zero!")
-    else:
-        print("Invalid choice!")
+if is_prime(n):
+    print(f"{n} is a prime number")
+else:
+    print(f"{n} is not a prime number")
 
-if __name__ == "__main__":
-    calculator()
-```
 
-### 2. Step: Dokerfile
+Dockerfile:
 
-```dockerfile
 FROM python:3.10-slim
-WORKDIR /calcualtor
-COPY . /calculator
-CMD ["python", "calculator.py"]
-```
 
-### 3. Build the Docker Image
+WORKDIR /prime
 
-Open a terminal, go to the folder containing the two files, and run:
+COPY prime.py .
 
-```bash
-docker build -t arithmetic-calculator .
-```
+CMD ["python", "prime.py"]
 
-### 4. docker Run the Container (Interactive)
 
-```bash
-rit@rit:~/hello$ docker run -it calcualtor-docker
-```
+Output:
 
-```text
-Simple Arithmetic Calculator
-Enter first number: 1
-Enter second number: 2
-Select operation:
-1. Add
-2. Subtract
-3. Multiply
-4. Divide
-Enter choice (1/2/3/4): 1
-Result: 3.0
-rit@rit:~/hello$
-```
+rit@rit:~/chart$ docker run -it prime-check
+
+Enter a number: 3
+3 is a prime number
+
+
+rit@rit:~/chart$ docker run -it prime-check
+
+Enter a number: 2
+2 is a prime number
