@@ -1,81 +1,88 @@
-# Experiment 5: To create a Chart-CSV Bar Chart
+Program-11: Temperature Converter (Celsius ↔ Fahrenheit) in Docker
 
-## Objective
+Objective:
 
-Read CSV and display console bar chart.
+Create a simple Python program that converts temperature values from Celsius to Fahrenheit and Fahrenheit to Celsius, and run it fully inside a Docker container without requiring internet.
 
-### 1. Python File: app.py
+Step 1: Create a Folder
 
-```python
-import csv
+mkdir TempConverter
 
-def read_csv(filename):
-    students = []
-    with open(filename, newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            students.append((row['Name'], int(row['Marks'])))
-    return students
+cd TempConverter
 
-def draw_bar_chart(data):
-    print("Student Marks Visualization\n")
-    max_name_len = max(len(name) for name, _ in data)
-    max_mark = max(mark for _, mark in data)
 
-    for name, mark in data:
-        bar = '█' * (mark * 50 // max_mark)  # scale to max 50 chars
-        print(f"{name.ljust(max_name_len)} | {bar} {mark}")
+Step 2: Create Python Program
+
+nano Celsious.py
+
+Python File: Celsious.py
+
+def c_to_f(c):
+    return (c * 9/5) + 32
+
+
+def f_to_c(f):
+    return (f - 32) * 5/9
+
 
 if __name__ == "__main__":
-    students = read_csv("students.csv")
-    draw_bar_chart(students)
-```
+    print("=== Temperature Converter (Docker Offline) ===")
+    print("1. Celsius to Fahrenheit")
+    print("2. Fahrenheit to Celsius")
 
-### 2. Dockerfile
+    choice = input("Enter choice (1 or 2): ")
 
-```dockerfile
-FROM python:3.12-slim
-WORKDIR /app
-COPY app.py .
-COPY students.csv .
-CMD ["python", "app.py"]
-```
+    if choice == "1":
+        c = float(input("Enter Celsius: "))
+        print("Fahrenheit =", c_to_f(c))
 
-### Create Student.csv
+    elif choice == "2":
+        f = float(input("Enter Fahrenheit: "))
+        print("Celsius =", f_to_c(f))
 
-```text
-rit@rit:~/chart$ nano students.csv
-```
+    else:
+        print("Invalid choice!")
 
-```csv
-Name,Marks
-Rahul,80
-Priya,90
-Anil,70
-Sneha,95
-```
 
-**Note:** Create a `students.csv` file and save it in folder `chart`.
+Step 3: Create a Dockerfile
 
-### Create Docker Image
+nano Dockerfile
 
-```text
-rit@rit:~/chart$ docker build -t student-chart .
-```
+Dockerfile:
 
-### Run the Container (Interactive Mode)
+FROM python:3.10-slim
 
-```text
-rit@rit:~/chart$ docker run --rm student-chart
-```
+WORKDIR /Celsious
 
-### Output
+COPY Celsious.py .
 
-```text
-Student Marks Visualization
+CMD ["python", "Celsious.py"]
 
-Rahul | ██████████████████████████████████████████ 80
-Priya | ███████████████████████████████████████████████ 90
-Anil  | █████████████████████████████████████ 70
-Sneha | ██████████████████████████████████████████████████ 95
-```
+
+Step 4: Build Docker Image
+
+rit@rit:~/chart$ docker build -t celsious-convert .
+
+
+Step 5: Run Docker Container
+
+rit@rit:~/chart$ docker run -it celsious-convert
+
+
+Output:
+
+=== Temperature Converter (Docker Offline) ===
+
+1. Celsius to Fahrenheit
+2. Fahrenheit to Celsius
+
+Enter choice (1 or 2): 1
+
+Enter Celsius: 23
+
+Fahrenheit = 73.4
+
+
+Result:
+
+Successfully created and executed a temperature converter program inside a Docker container.
