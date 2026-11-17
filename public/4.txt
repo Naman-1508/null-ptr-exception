@@ -1,58 +1,66 @@
-# Experiment 4: Container Program – Factorial Calculator
+Program-10: Simple Ubuntu Container with a Custom Script
 
-## Objective
+Step 1: Create a Working Folder
 
-* To create a Python program that calculates the factorial of a number.
-* To dockerize the program and run it inside a container.
+rit@rit:~$ cd shell
 
-## Steps
+rit@rit:~/shell$
 
-### 1. Create Python Program (factorial.py)
 
-```python
-def factorial(n):
-    if n == 0:
-        return 1
-    else:
-        return n * factorial(n - 1)
+Step 2: Create a Shell Script
 
-n = int(input("Enter a number: "))
-result = factorial(n)
-print("Factorial of", n, "is", result)
-```
+rit@rit:~/shell$ nano hello.sh
 
-### 2. Create Dockerfile
+Shell Script (hello.sh):
 
-```dockerfile
-FROM python:3.10-slim
-WORKDIR /factorial
-COPY . /factorial
-CMD ["python", "factorial.py"]
-```
+#!/bin/bash
 
-### 3. Build the Docker Image
+echo "-----------------------------------------"
+echo " Welcome to Docker Offline Demo!"
+echo " This script is running inside a container."
+echo "----------------------------------------------"
 
-```bash
-docker build -t factorial-calculator .
-```
 
-### 4. Run the Container (Interactive Mode)
+Step 3: Create a Dockerfile
 
-```bash
-docker run -it factorial-calculator
-```
+rit@rit:~/shell$ nano Dockerfile
 
-### 5. Expected Outcome
+Dockerfile:
 
-When the container starts, it will prompt for input:
+FROM ubuntu:latest
 
-```text
-Enter a number: 5
-Factorial of 5 is 120
-```
+WORKDIR /app
 
-```text
-rit@rit:~/hello$ docker run -it hello-docker
-Enter a number: 5
-Factorial of 5 is 120
-```
+COPY hello.sh .
+
+# Give execute permission
+RUN chmod +x hello.sh
+
+# Run the script
+CMD ["./hello.sh"]
+
+
+Step 4: Create Docker Image
+
+rit@rit:~/shell$ docker build -t shell-demo .
+
+
+Step 5: Run Docker Container
+
+rit@rit:~/shell$ docker run -it shell-demo
+
+
+Output:
+
+-----------------------------------------
+ Welcome to Docker Offline Demo!
+ This script is running inside a container.
+----------------------------------------------
+
+
+rit@rit:~/shell$
+
+
+Result:
+
+Successfully created and executed a custom shell script inside an Ubuntu Docker container.
