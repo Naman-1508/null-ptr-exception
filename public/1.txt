@@ -1,68 +1,58 @@
-# Experiment 1: Create Docker Image – Hello World
+7. Ping Simulation
 
-## Objective
+Python File: ping.py
 
-Create a simple Python program and run it inside a Docker container.
+import os
+import sys
 
-## Experiment-1: Create Docker Image
+if len(sys.argv) != 2:
+    print("Usage: python ping.py <hostname_or_ip>")
+    sys.exit(1)
 
-**Login:** RIT-ADMIN
-**Password:** rit@2025
+host = sys.argv[1]
 
-### Step 1: Create a folder Hello-world in Home folder
+response = os.system(f"ping -c 4 {host}")
 
-```bash
-gedit app.py
-```
+if response == 0:
+    print(f"{host} is reachable")
+else:
+    print(f"{host} is not reachable")
 
-Open Terminal:
 
-```bash
-cd hello-world
-gedit app.py
-```
+Dockerfile:
 
-#### 1. Create a simple Python program
-
-Make a:
-
-```python
-print("Hello, World from Docker!")
-```
-
-### Step 2: Write a Dockerfile
-
-Create a file named `Dockerfile` in the same folder:
-
-```bash
-gedit Dockerfile
-```
-
-```dockerfile
 FROM python:3.10-slim
-WORKDIR /app
-COPY . /app
-CMD ["python", "app.py"]
-```
 
-### Step 3: Build the Docker image
+WORKDIR /ping
 
-Open a terminal in the folder and run:
+COPY ping.py .
 
-```bash
-docker build -t hello-docker .
-```
+CMD ["python", "ping.py"]
 
-### Step 4: Run the container
 
-Now run the image:
+Execution Steps:
 
-```bash
-docker run hello-docker
-```
+Step 1: Check network configuration
 
-**Output should be:**
+it@rit:~/ping$ ifconfig
 
-```text
-Hello, World from Docker!
-```
+Step 2: Execute the Python program
+
+it@rit:~/ping$ python3 ping.py 127.0.0.1
+
+
+Output:
+
+PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+
+64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.028 ms
+64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.063 ms
+64 bytes from 127.0.0.1: icmp_seq=3 ttl=64 time=0.065 ms
+64 bytes from 127.0.0.1: icmp_seq=4 ttl=64 time=0.020 ms
+
+--- 127.0.0.1 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3081ms
+
+rtt min/avg/max/mdev = 0.020/0.044/0.065/0.020 ms
+
+127.0.0.1 is reachable
