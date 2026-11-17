@@ -1,62 +1,211 @@
-# Experiment 3: CPU Delay – CPU Intensive Task
+Program-9: Deploying Nginx Pod and Service using Minikube
 
-## Objective
+Step 1: Install Minikube (on Ubuntu)
 
-Demonstrate CPU usage with Docker.
+1. Update system packages:
+sudo apt update -y
 
-## Steps
+2. Install curl:
+sudo apt install curl -y
 
-### 1. Create a CPU load Python script (cpuload.py)
+3. Download Minikube binary:
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 
-```python
-import time
+4. Install Minikube:
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
 
-print("Starting CPU-intensive task...")
-start = time.time()
-x = 0
 
-while time.time() - start < 30:
-    for i in range(1000000):
-        x += i * i
+Step 2: Install kubectl (Kubernetes CLI)
 
-print("Task completed!")
-```
+1. Download the latest stable kubectl binary:
 
-### 2. Step: Doker Image
+curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
 
-```dockerfile
-FROM python:3.10-slim
-WORKDIR /cpudelay
-COPY . /cpudelay
-CMD ["python", "cpudelay.py"]
-```
+2. Make it executable:
+chmod +x kubectl
 
-### 3. Build Docker Image
+3. Move it to your PATH:
+sudo mv kubectl /usr/local/bin/
 
-In the terminal, go to the folder containing these files and run:
 
-```bash
-docker build -t cpudelay-docker .
-```
+Step 3: Test Installation
 
-### 4. Run the Container
+minikube version
 
-Without CPU limit (uses full CPU available):
+kubectl version --client
 
-```bash
-docker run -it cpudelay-docker
-```
 
-```text
-rit@rit:~/hello$ docker run -it cpudelay-docker
-Starting CPU-intensive task...
-Task completed!
-```
+Step 4: Start Minikube
 
-### 5. Monitor CPU Usage
+1. Start Minikube using Docker as the driver:
 
-Open another terminal and run:
+minikube start --driver=docker
 
-```bash
-top
-```
+2. Check Minikube status:
+
+minikube status
+
+
+Step 5: Create the Pod and Service YAML File
+
+1. Enter Minikube:
+
+minikube ssh
+
+2. Pull the Nginx image:
+
+docker pull nginx
+
+3. Exit Minikube:
+
+exit
+
+4. Create the YAML file:
+
+nano hello.yaml
+
+
+YAML Configuration (hello.yaml):
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-pod
+  labels:
+    app: hello
+spec:
+  containers:
+  - name: hello-container
+    image: nginx
+    ports:
+    - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-service
+spec:
+  selector:
+    app: hello
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30007
+
+
+Save the file using Ctrl+X, then press Y and Enter.
+
+
+Step 6: Apply the YAML Configuration
+
+kubectl apply -f hello.yaml
+
+Output:
+
+pod/hello-pod created
+service/hello-service unchanged
+
+
+Step 7: Check Pod Status
+
+kubectl get pods
+
+Initial Output:
+
+NAME                                      READY   STATUS             RESTARTS   AGE
+hello-deploy-55b5759b47-tknsj             0/1     ImagePullBackOff   0          4m26s
+hello-pod                                 0/1     ContainerCreating  0          17s
+
+
+Step 8: Check Minikube IP Address
+
+minikube ip
+
+Output:
+
+192.168.49.2
+
+
+Step 9: Resolve ImagePullBackOff Error
+
+1. Enter Minikube:
+
+minikube ssh
+
+2. Pull the Nginx image:
+
+docker pull nginx
+
+Note: Initially, the image pull failed due to a network timeout.
+
+3. Check available Docker images:
+
+docker images
+
+4. Exit Minikube:
+
+exit
+
+
+Step 10: Delete Old Pod and Deployment
+
+kubectl delete pod hello-pod
+
+kubectl delete deployment hello-deploy
+
+
+Step 11: Reapply the YAML Configuration
+
+kubectl apply -f hello.yaml
+
+Output:
+
+pod/hello-pod created
+service/hello-service unchanged
+
+
+Step 12: Verify Pod Status
+
+kubectl get pods
+
+Output:
+
+NAME       READY   STATUS    RESTARTS   AGE
+hello-pod  1/1     Running   0          10s
+
+
+Step 13: Verify Service
+
+kubectl get svc
+
+Output:
+
+NAME            TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+hello-service   NodePort   10.109.4.244    <none>        80:30007/TCP   12m
+kubernetes      ClusterIP  10.96.0.1       <none>        443/TCP        17m
+
+
+Step 14: Access Nginx in Browser
+
+Open the browser and enter:
+
+http://192.168.49.2:30007/
+
+
+Output:
+
+Welcome to nginx!
+
+If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
+
+For online documentation and support please refer to nginx.org.
+Commercial support is available at nginx.com.
+
+Thank you for using nginx.
+
+
+Result:
+
+Successfully deployed an Nginx Pod and NodePort Service using Minikube and accessed the Nginx welcome page through a web browser.
