@@ -1,0 +1,54 @@
+sudo su
+apt install gcc
+gedit pp.c
+gcc -fopenmp pp.c -o pp
+./pp
+
+#include <stdio.h>
+#include <omp.h>
+
+#define NUM_TASKS 4
+
+void blur()
+{
+    printf("Blurring the image...\n");
+}
+
+void sharpen()
+{
+    printf("Sharpening the image...\n");
+}
+
+void contrast()
+{
+    printf("Adjusting contrast...\n");
+}
+
+void resize()
+{
+    printf("Resizing the image...\n");
+}
+
+int main()
+{
+    // Step 1: Parallelize image processing tasks
+    #pragma omp parallel
+    {
+        #pragma omp single
+        {
+            #pragma omp task
+            blur();
+
+            #pragma omp task
+            sharpen();
+
+            #pragma omp task
+            contrast();
+
+            #pragma omp task
+            resize();
+        }
+    }
+
+    return 0;
+}
