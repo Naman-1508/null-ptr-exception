@@ -1,88 +1,113 @@
-Program-11: Temperature Converter (Celsius ↔ Fahrenheit) in Docker
+Program: Parallel Linear Search Using Pthreads
 
-Objective:
+Step 1: Create a C Program
 
-Create a simple Python program that converts temperature values from Celsius to Fahrenheit and Fahrenheit to Celsius, and run it fully inside a Docker container without requiring internet.
+gedit parallel_search.c
 
-Step 1: Create a Folder
+CODE:
 
-mkdir TempConverter
+#include <stdio.h>
+#include <pthread.h>
 
-cd TempConverter
+#define SIZE 100
+
+// Array size
+int data[SIZE];
+
+// Index of the found element
+int found_index = -1;
+
+// Mutex for synchronizing access
+pthread_mutex_t lock;
+
+// Function to search for a number in a subarray
+void* search(void* arg)
+{
+    int start = *(int*)arg;
+
+    // Start index for this thread's subarray
+    for (int i = start; i < start + SIZE / 4; i++)
+    {
+        if (data[i] == 50)
+        {
+            // Lock mutex before updating shared variable
+            pthread_mutex_lock(&lock);
+
+            found_index = i;
+
+            // Unlock mutex after updating
+            pthread_mutex_unlock(&lock);
+
+            return NULL;
+        }
+    }
+
+    return NULL;
+}
+
+int main()
+{
+    pthread_t threads[4];
+
+    // Array for starting indices
+    int thread_ids[4];
+
+    // Initialize data array with values from 1 to 100
+    for (int i = 0; i < SIZE; i++)
+    {
+        data[i] = i + 1;
+    }
+
+    // Initialize the mutex
+    pthread_mutex_init(&lock, NULL);
+
+    // Create 4 threads
+    for (int i = 0; i < 4; i++)
+    {
+        thread_ids[i] = i * (SIZE / 4);
+
+        pthread_create(&threads[i], NULL, search,
+                       (void*)&thread_ids[i]);
+    }
+
+    // Wait for all threads to complete
+    for (int i = 0; i < 4; i++)
+    {
+        pthread_join(threads[i], NULL);
+    }
+
+    // Print the result
+    if (found_index != -1)
+    {
+        printf("Number 50 found at index: %d\n", found_index);
+    }
+    else
+    {
+        printf("Number 50 not found.\n");
+    }
+
+    // Destroy the mutex
+    pthread_mutex_destroy(&lock);
+
+    return 0;
+}
 
 
-Step 2: Create Python Program
+Step 2: Compile the Program
 
-nano Celsious.py
-
-Python File: Celsious.py
-
-def c_to_f(c):
-    return (c * 9/5) + 32
+gcc -pthread -o parallel_search parallel_search.c
 
 
-def f_to_c(f):
-    return (f - 32) * 5/9
+Step 3: Execute the Program
 
-
-if __name__ == "__main__":
-    print("=== Temperature Converter (Docker Offline) ===")
-    print("1. Celsius to Fahrenheit")
-    print("2. Fahrenheit to Celsius")
-
-    choice = input("Enter choice (1 or 2): ")
-
-    if choice == "1":
-        c = float(input("Enter Celsius: "))
-        print("Fahrenheit =", c_to_f(c))
-
-    elif choice == "2":
-        f = float(input("Enter Fahrenheit: "))
-        print("Celsius =", f_to_c(f))
-
-    else:
-        print("Invalid choice!")
-
-
-Step 3: Create a Dockerfile
-
-nano Dockerfile
-
-Dockerfile:
-
-FROM python:3.10-slim
-
-WORKDIR /Celsious
-
-COPY Celsious.py .
-
-CMD ["python", "Celsious.py"]
-
-
-Step 4: Build Docker Image
-
-rit@rit:~/chart$ docker build -t celsious-convert .
-
-
-Step 5: Run Docker Container
-
-rit@rit:~/chart$ docker run -it celsious-convert
+./parallel_search
 
 
 Output:
 
-=== Temperature Converter (Docker Offline) ===
-
-1. Celsius to Fahrenheit
-2. Fahrenheit to Celsius
-
-Enter choice (1 or 2): 1
-
-Enter Celsius: 23
-
-Fahrenheit = 73.4
+Number 50 found at index: 49
 
 
-Result:
+RESULT:
 
-Successfully created and executed a temperature converter program inside a Docker container.
+Successfully implemented and executed Parallel Linear Search using Pthreads by dividing an array of 100 elements into four parts and searching them simultaneously using four threads.
