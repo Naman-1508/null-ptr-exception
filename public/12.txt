@@ -1,0 +1,56 @@
+sudo su
+apt install gcc
+gedit pp.c
+gcc pp.c -o pp -lpthread
+./pp
+
+#include <stdio.h>
+#include <pthread.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#define NUM_TASKS 10
+#define NUM_THREADS 4
+
+int tasks[NUM_TASKS];
+
+// Step 1: Function to simulate task processing
+void* process_tasks(void* arg)
+{
+    int thread_id = *(int*)arg;
+
+    for (int i = thread_id; i < NUM_TASKS; i += NUM_THREADS)
+    {
+        printf("Thread %d processing task %d\n", thread_id, tasks[i]);
+        sleep(1);
+    }
+
+    return NULL;
+}
+
+int main()
+{
+    pthread_t threads[NUM_THREADS];
+    int thread_ids[NUM_THREADS];
+
+    // Step 2: Initialize tasks
+    for (int i = 0; i < NUM_TASKS; i++)
+    {
+        tasks[i] = i + 1;
+    }
+
+    // Step 3: Create threads
+    for (int i = 0; i < NUM_THREADS; i++)
+    {
+        thread_ids[i] = i;
+        pthread_create(&threads[i], NULL, process_tasks, (void*)&thread_ids[i]);
+    }
+
+    // Step 4: Join threads
+    for (int i = 0; i < NUM_THREADS; i++)
+    {
+        pthread_join(threads[i], NULL);
+    }
+
+    return 0;
+}
