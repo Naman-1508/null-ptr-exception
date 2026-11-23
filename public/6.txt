@@ -1,52 +1,159 @@
-# Experiment 6: Environment Variables Printer
+Program: Parallel Merge Sort Using Pthreads
 
-## Objective
+Step 1: Create a C Program
 
-Print environment variables passed to container.
+gedit parallel_merge_sort.c
 
-### Python File: env.py
+CODE:
 
-```python id="p5e2j1"
-import os
+#include <stdio.h>
+#include <pthread.h>
+#include <stdlib.h>
 
-print("=== Environment Variables Passed to Container ===\n")
+#define SIZE 100
+#define NUM_THREADS 4
 
-for key, value in os.environ.items():
-    print(f"{key} = {value}")
-```
+int array[SIZE];
 
-### Dockerfile
+// Temporary array for merging
+int temp[SIZE];
 
-```dockerfile id="q7m3vx"
-FROM python:3.10-slim
-WORKDIR /app
-COPY env.py .
-CMD ["python", "env.py"]
-```
+// Merge function for merging two sorted arrays
+void merge(int left, int mid, int right)
+{
+    int i = left, j = mid + 1, k = left;
 
-### Create Docker Image
+    while (i <= mid && j <= right)
+    {
+        if (array[i] < array[j])
+        {
+            temp[k++] = array[i++];
+        }
+        else
+        {
+            temp[k++] = array[j++];
+        }
+    }
 
-```text id="k1n8sz"
-rit@rit:~/Env$ docker build -t env-calculator .
-```
+    while (i <= mid)
+    {
+        temp[k++] = array[i++];
+    }
 
-### Run the Container
+    while (j <= right)
+    {
+        temp[k++] = array[j++];
+    }
 
-```text id="m4c6qa"
-rit@rit:~/Env$ docker run -it env-calculator
-```
+    for (i = left; i <= right; i++)
+    {
+        array[i] = temp[i];
+    }
+}
 
-### Output
+// Iterative merge sort for each thread's portion
+void merge_sort(int left, int right)
+{
+    if (left >= right)
+        return;
 
-```text id="8h7d2p"
-=== Environment Variables Passed to Container ===
+    int mid = (left + right) / 2;
 
-PATH = /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-HOSTNAME = 88fb1e9997e0
-TERM = xterm
-LANG = C.UTF-8
-GPG_KEY = A035C8C19219BA821ECEA86B64E628F8D684696D
-PYTHON_VERSION = 3.10.19
-PYTHON_SHA256 = c8f4a596572201d81dd7df91f70e177e19a70f1d489968b54b5fbbf29a97c076
-HOME = /root
-```
+    merge_sort(left, mid);
+    merge_sort(mid + 1, right);
+
+    merge(left, mid, right);
+}
+
+// Thread function to sort a portion of the array
+void* thread_sort(void* arg)
+{
+    int thread_part = *(int*)arg;
+
+    int left = thread_part * (SIZE / NUM_THREADS);
+
+    int right = (thread_part + 1) * (SIZE / NUM_THREADS) - 1;
+
+    merge_sort(left, right);
+
+    pthread_exit(NULL);
+}
+
+// Final merging of all parts
+void merge_all_parts()
+{
+    int part_size = SIZE / NUM_THREADS;
+
+    for (int i = 1; i < NUM_THREADS; i++)
+    {
+        merge(0, i * part_size - 1,
+              (i + 1) * part_size - 1);
+    }
+}
+
+int main()
+{
+    pthread_t threads[NUM_THREADS];
+
+    int thread_ids[NUM_THREADS];
+
+    // Initialize array with random numbers
+    for (int i = 0; i < SIZE; i++)
+    {
+        array[i] = rand() % 1000;
+    }
+
+    // Create threads for parallel sorting
+    for (int i = 0; i < NUM_THREADS; i++)
+    {
+        thread_ids[i] = i;
+
+        pthread_create(&threads[i], NULL, thread_sort,
+                       (void*)&thread_ids[i]);
+    }
+
+    // Join threads
+    for (int i = 0; i < NUM_THREADS; i++)
+    {
+        pthread_join(threads[i], NULL);
+    }
+
+    // Merge all sorted parts
+    merge_all_parts();
+
+    // Print sorted array
+    printf("Sorted Array:\n");
+
+    for (int i = 0; i < SIZE; i++)
+    {
+        printf("%d ", array[i]);
+    }
+
+    printf("\n");
+
+    return 0;
+}
+
+
+Step 2: Compile the Program
+
+gcc -pthread -o parallel_merge_sort parallel_merge_sort.c
+
+
+Step 3: Execute the Program
+
+./parallel_merge_sort
+
+
+Output:
+
+Sorted Array:
+
+83 86 135 211 242 277 362 383 386 421 426 492 540 567 649 690 ...
+
+(Note: The complete output contains 100 sorted numbers.)
+
+
+RESULT:
+
+Successfully implemented and executed Parallel Merge Sort using Pthreads by dividing an array of 100 elements into four parts, sorting them concurrently, and merging the sorted parts into a single sorted array.
