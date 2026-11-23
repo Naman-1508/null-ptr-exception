@@ -1,46 +1,242 @@
-Program-8: Prime Number Checker
+OPENMP, PTHREADS, CUDA AND MPI INSTALLATION AND EXECUTION
 
-Python File: prime.py
+1. OPENMP INSTALLATION AND EXECUTION
 
-def is_prime(n):
-    if n <= 1:
-        return False
+Step 1: Check GCC Installation
 
-    for i in range(2, int(n ** 0.5) + 1):
-        if n % i == 0:
-            return False
+gcc --version
 
-    return True
+Step 2: Install GCC if not installed
 
+sudo apt update
 
-n = int(input("Enter a number: "))
+sudo apt install build-essential -y
 
-if is_prime(n):
-    print(f"{n} is a prime number")
-else:
-    print(f"{n} is not a prime number")
+Step 3: Create a C Program
 
+gedit omp_example.c
 
-Dockerfile:
+CODE: OPENMP PROGRAM
 
-FROM python:3.10-slim
+#include <omp.h>
+#include <stdio.h>
 
-WORKDIR /prime
+int main()
+{
+    #pragma omp parallel
+    {
+        int thread_id = omp_get_thread_num();
+        printf("Hello from thread %d\n", thread_id);
+    }
 
-COPY prime.py .
+    return 0;
+}
 
-CMD ["python", "prime.py"]
+Step 4: Compile the Program
 
+gcc -fopenmp -o omp_example omp_example.c
+
+Step 5: Execute the Program
+
+./omp_example
 
 Output:
 
-rit@rit:~/chart$ docker run -it prime-check
+Hello from thread 0
+Hello from thread 1
+Hello from thread 2
+Hello from thread 3
 
-Enter a number: 3
-3 is a prime number
+(Note: Output and number of threads may vary.)
 
 
-rit@rit:~/chart$ docker run -it prime-check
+2. PTHREADS INSTALLATION AND EXECUTION
 
-Enter a number: 2
-2 is a prime number
+Step 1: Install GCC
+
+sudo apt update
+
+sudo apt install build-essential -y
+
+Step 2: Create a C Program
+
+gedit pthread_example.c
+
+CODE: PTHREADS PROGRAM
+
+#include <pthread.h>
+#include <stdio.h>
+
+void* print_message(void* thread_id)
+{
+    int tid = *((int*)thread_id);
+    printf("Hello from thread %d\n", tid);
+    return NULL;
+}
+
+int main()
+{
+    pthread_t threads[5];
+    int thread_ids[5];
+
+    for (int i = 0; i < 5; i++)
+    {
+        thread_ids[i] = i;
+        pthread_create(&threads[i], NULL, print_message, (void*)&thread_ids[i]);
+    }
+
+    for (int i = 0; i < 5; i++)
+    {
+        pthread_join(threads[i], NULL);
+    }
+
+    return 0;
+}
+
+Step 3: Compile the Program
+
+gcc -pthread -o pthread_example pthread_example.c
+
+Step 4: Execute the Program
+
+./pthread_example
+
+Output:
+
+Hello from thread 0
+Hello from thread 1
+Hello from thread 2
+Hello from thread 3
+Hello from thread 4
+
+
+3. CUDA INSTALLATION AND EXECUTION
+
+Step 1: Download CUDA Toolkit
+
+Visit the official NVIDIA website:
+
+https://developer.nvidia.com/cuda-downloads
+
+Step 2: Install CUDA Toolkit
+
+Follow the installation instructions according to your Linux distribution and NVIDIA GPU.
+
+Step 3: Set Environment Variables
+
+Open the terminal and execute:
+
+gedit ~/.bashrc
+
+Add the following lines:
+
+export PATH=/usr/local/cuda/bin:$PATH
+
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+
+Step 4: Apply Environment Variables
+
+source ~/.bashrc
+
+Step 5: Check CUDA Installation
+
+nvcc --version
+
+Step 6: Create a CUDA Program
+
+gedit cuda_example.cu
+
+CODE: CUDA PROGRAM
+
+#include <stdio.h>
+
+__global__ void helloFromGPU()
+{
+    printf("Hello from GPU thread %d\n", threadIdx.x);
+}
+
+int main()
+{
+    helloFromGPU<<<1, 5>>>();
+
+    cudaDeviceSynchronize();
+
+    return 0;
+}
+
+Step 7: Compile the Program
+
+nvcc -o cuda_example cuda_example.cu
+
+Step 8: Execute the Program
+
+./cuda_example
+
+Output:
+
+Hello from GPU thread 0
+Hello from GPU thread 1
+Hello from GPU thread 2
+Hello from GPU thread 3
+Hello from GPU thread 4
+
+Note: CUDA requires a compatible NVIDIA GPU and properly installed NVIDIA drivers and CUDA Toolkit.
+
+
+4. MPI INSTALLATION AND EXECUTION
+
+Step 1: Update System Packages
+
+sudo apt update
+
+Step 2: Install MPICH
+
+sudo apt install mpich -y
+
+Step 3: Create an MPI C Program
+
+gedit mpi_example.c
+
+CODE: MPI PROGRAM
+
+#include <mpi.h>
+#include <stdio.h>
+
+int main(int argc, char** argv)
+{
+    MPI_Init(&argc, &argv);
+
+    int world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+    int world_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+
+    printf("Hello from process %d out of %d processes\n",
+           world_rank, world_size);
+
+    MPI_Finalize();
+
+    return 0;
+}
+
+Step 4: Compile the MPI Program
+
+mpicc -o mpi_example mpi_example.c
+
+Step 5: Execute the MPI Program Using 5 Processes
+
+mpirun -np 5 ./mpi_example
+
+Output:
+
+Hello from process 0 out of 5 processes
+Hello from process 1 out of 5 processes
+Hello from process 2 out of 5 processes
+Hello from process 3 out of 5 processes
+Hello from process 4 out of 5 processes
+
+
+RESULT:
+
+Successfully installed and executed OPENMP, PTHREADS, CUDA and MPI programs using their respective compilers and execution commands.
