@@ -1,211 +1,117 @@
-Program-9: Deploying Nginx Pod and Service using Minikube
+Program: Matrix Addition Using Pthreads
 
-Step 1: Install Minikube (on Ubuntu)
+Step 1: Create a C Program
 
-1. Update system packages:
-sudo apt update -y
+gedit matrix.c
 
-2. Install curl:
-sudo apt install curl -y
+CODE:
 
-3. Download Minikube binary:
-curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+#include <stdio.h>
+#include <pthread.h>
+#include <stdlib.h>
 
-4. Install Minikube:
-sudo install minikube-linux-amd64 /usr/local/bin/minikube
+#define SIZE 3
 
+// Matrix size
+int A[SIZE][SIZE] = {
+    {1, 2, 3},
+    {4, 5, 6},
+    {7, 8, 9}
+};
 
-Step 2: Install kubectl (Kubernetes CLI)
+int B[SIZE][SIZE] = {
+    {9, 8, 7},
+    {6, 5, 4},
+    {3, 2, 1}
+};
 
-1. Download the latest stable kubectl binary:
+int C[SIZE][SIZE];
 
-curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+// Structure to hold row index and thread ID
+typedef struct {
+    int row;
+    pthread_t thread_id;
+} thread_data;
 
-2. Make it executable:
-chmod +x kubectl
+// Function to add elements of matrices
+void* add_matrices(void* arg)
+{
+    thread_data* data = (thread_data*)arg;
+    int i = data->row;
 
-3. Move it to your PATH:
-sudo mv kubectl /usr/local/bin/
+    printf("Thread ID: %lu is processing row %d\n",
+           (unsigned long)pthread_self(), i);
 
+    for (int j = 0; j < SIZE; j++)
+    {
+        C[i][j] = A[i][j] + B[i][j];
+    }
 
-Step 3: Test Installation
+    free(data);
 
-minikube version
+    return NULL;
+}
 
-kubectl version --client
+int main()
+{
+    pthread_t threads[SIZE];
 
+    // Create threads for each row
+    for (int i = 0; i < SIZE; i++)
+    {
+        thread_data* data = malloc(sizeof(thread_data));
 
-Step 4: Start Minikube
+        data->row = i;
 
-1. Start Minikube using Docker as the driver:
+        pthread_create(&threads[i], NULL, add_matrices, data);
+    }
 
-minikube start --driver=docker
+    // Join threads
+    for (int i = 0; i < SIZE; i++)
+    {
+        pthread_join(threads[i], NULL);
+    }
 
-2. Check Minikube status:
+    // Print the resultant matrix
+    printf("Resultant Matrix:\n");
 
-minikube status
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            printf("%d ", C[i][j]);
+        }
 
+        printf("\n");
+    }
 
-Step 5: Create the Pod and Service YAML File
+    return 0;
+}
 
-1. Enter Minikube:
 
-minikube ssh
+Step 2: Compile the Program
 
-2. Pull the Nginx image:
+gcc -pthread -o matrix matrix.c
 
-docker pull nginx
 
-3. Exit Minikube:
+Step 3: Execute the Program
 
-exit
-
-4. Create the YAML file:
-
-nano hello.yaml
-
-
-YAML Configuration (hello.yaml):
-
-apiVersion: v1
-kind: Pod
-metadata:
-  name: hello-pod
-  labels:
-    app: hello
-spec:
-  containers:
-  - name: hello-container
-    image: nginx
-    ports:
-    - containerPort: 80
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: hello-service
-spec:
-  selector:
-    app: hello
-  type: NodePort
-  ports:
-  - port: 80
-    targetPort: 80
-    nodePort: 30007
-
-
-Save the file using Ctrl+X, then press Y and Enter.
-
-
-Step 6: Apply the YAML Configuration
-
-kubectl apply -f hello.yaml
-
-Output:
-
-pod/hello-pod created
-service/hello-service unchanged
-
-
-Step 7: Check Pod Status
-
-kubectl get pods
-
-Initial Output:
-
-NAME                                      READY   STATUS             RESTARTS   AGE
-hello-deploy-55b5759b47-tknsj             0/1     ImagePullBackOff   0          4m26s
-hello-pod                                 0/1     ContainerCreating  0          17s
-
-
-Step 8: Check Minikube IP Address
-
-minikube ip
-
-Output:
-
-192.168.49.2
-
-
-Step 9: Resolve ImagePullBackOff Error
-
-1. Enter Minikube:
-
-minikube ssh
-
-2. Pull the Nginx image:
-
-docker pull nginx
-
-Note: Initially, the image pull failed due to a network timeout.
-
-3. Check available Docker images:
-
-docker images
-
-4. Exit Minikube:
-
-exit
-
-
-Step 10: Delete Old Pod and Deployment
-
-kubectl delete pod hello-pod
-
-kubectl delete deployment hello-deploy
-
-
-Step 11: Reapply the YAML Configuration
-
-kubectl apply -f hello.yaml
-
-Output:
-
-pod/hello-pod created
-service/hello-service unchanged
-
-
-Step 12: Verify Pod Status
-
-kubectl get pods
-
-Output:
-
-NAME       READY   STATUS    RESTARTS   AGE
-hello-pod  1/1     Running   0          10s
-
-
-Step 13: Verify Service
-
-kubectl get svc
-
-Output:
-
-NAME            TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
-hello-service   NodePort   10.109.4.244    <none>        80:30007/TCP   12m
-kubernetes      ClusterIP  10.96.0.1       <none>        443/TCP        17m
-
-
-Step 14: Access Nginx in Browser
-
-Open the browser and enter:
-
-http://192.168.49.2:30007/
+./matrix
 
 
 Output:
 
-Welcome to nginx!
+Thread ID: 140234 is processing row 0
+Thread ID: 140235 is processing row 1
+Thread ID: 140236 is processing row 2
 
-If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
+Resultant Matrix:
 
-For online documentation and support please refer to nginx.org.
-Commercial support is available at nginx.com.
+10 10 10
+10 10 10
+10 10 10
 
-Thank you for using nginx.
 
+RESULT:
 
-Result:
-
-Successfully deployed an Nginx Pod and NodePort Service using Minikube and accessed the Nginx welcome page through a web browser.
+Successfully performed matrix addition using Pthreads by creating separate threads for processing each row of the matrices.
