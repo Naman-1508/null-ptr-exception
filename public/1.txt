@@ -1,58 +1,80 @@
-7. Ping Simulation
+Program-12: MPI Hello World Program
 
-Python File: ping.py
+Step 1: Switch to Superuser
 
-import os
-import sys
-
-if len(sys.argv) != 2:
-    print("Usage: python ping.py <hostname_or_ip>")
-    sys.exit(1)
-
-host = sys.argv[1]
-
-response = os.system(f"ping -c 4 {host}")
-
-if response == 0:
-    print(f"{host} is reachable")
-else:
-    print(f"{host} is not reachable")
+sudo su
 
 
-Dockerfile:
+Step 2: Install MPICH
 
-FROM python:3.10-slim
+apt update
 
-WORKDIR /ping
-
-COPY ping.py .
-
-CMD ["python", "ping.py"]
+apt install mpich -y
 
 
-Execution Steps:
+Step 3: Create a C Program
 
-Step 1: Check network configuration
+gedit pp.c
 
-it@rit:~/ping$ ifconfig
 
-Step 2: Execute the Python program
+CODE: MPI HELLO WORLD
 
-it@rit:~/ping$ python3 ping.py 127.0.0.1
+#include <mpi.h>
+#include <stdio.h>
+
+int main(int argc, char** argv)
+{
+    // Initialize the MPI environment
+    MPI_Init(NULL, NULL);
+
+    // Get the number of processes
+    int world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+    // Get the rank of the process
+    int world_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+
+    // Get the name of the processor
+    char processor_name[MPI_MAX_PROCESSOR_NAME];
+    int name_len;
+
+    MPI_Get_processor_name(processor_name, &name_len);
+
+    // Print a hello world message
+    printf("Hello world from processor %s, rank %d out of %d processors\n",
+           processor_name, world_rank, world_size);
+
+    // Finalize the MPI environment
+    MPI_Finalize();
+
+    return 0;
+}
+
+
+Step 4: Compile the MPI Program
+
+mpicc -o pp pp.c
+
+
+Step 5: Execute the MPI Program Using 5 Processes
+
+mpirun -np 5 ./pp
 
 
 Output:
 
-PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+Hello world from processor rit, rank 0 out of 5 processors
 
-64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.028 ms
-64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.063 ms
-64 bytes from 127.0.0.1: icmp_seq=3 ttl=64 time=0.065 ms
-64 bytes from 127.0.0.1: icmp_seq=4 ttl=64 time=0.020 ms
+Hello world from processor rit, rank 1 out of 5 processors
 
---- 127.0.0.1 ping statistics ---
-4 packets transmitted, 4 received, 0% packet loss, time 3081ms
+Hello world from processor rit, rank 2 out of 5 processors
 
-rtt min/avg/max/mdev = 0.020/0.044/0.065/0.020 ms
+Hello world from processor rit, rank 3 out of 5 processors
 
-127.0.0.1 is reachable
+Hello world from processor rit, rank 4 out of 5 processors
+
+
+Result:
+
+Successfully compiled and executed the MPI Hello World program using MPICH with 5 processes.
