@@ -1,66 +1,180 @@
-Program-10: Simple Ubuntu Container with a Custom Script
+Program: Parallel Merge Sort Using Pthreads
 
-Step 1: Create a Working Folder
+Step 1: Create a C Program
 
-rit@rit:~$ cd shell
+gedit merge_sort.c
 
-rit@rit:~/shell$
+CODE:
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
+#define NUM_THREADS 4
+#define SIZE 16
+
+// Number of threads and array size
+int array[SIZE] = {
+    38, 27, 43, 3, 9, 82, 10, 29,
+    42, 2, 1, 8, 5, 6, 7, 4
+};
+
+int sorted[SIZE];
+
+// Mutex for synchronized access
+pthread_mutex_t mutex;
+
+typedef struct {
+    int left;
+    int right;
+    int thread_id;
+} thread_data;
+
+// Merge function to combine two sorted halves
+void merge(int left, int mid, int right)
+{
+    int i, j, k;
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    // Create temporary arrays
+    int* L = (int*)malloc(n1 * sizeof(int));
+    int* R = (int*)malloc(n2 * sizeof(int));
+
+    for (i = 0; i < n1; i++)
+        L[i] = array[left + i];
+
+    for (j = 0; j < n2; j++)
+        R[j] = array[mid + 1 + j];
+
+    // Merge the temporary arrays
+    i = 0;
+    j = 0;
+    k = left;
+
+    while (i < n1 && j < n2)
+    {
+        if (L[i] <= R[j])
+        {
+            array[k] = L[i];
+            i++;
+        }
+        else
+        {
+            array[k] = R[j];
+            j++;
+        }
+
+        k++;
+    }
+
+    // Copy remaining elements of L[]
+    while (i < n1)
+    {
+        array[k] = L[i];
+        i++;
+        k++;
+    }
+
+    // Copy remaining elements of R[]
+    while (j < n2)
+    {
+        array[k] = R[j];
+        j++;
+        k++;
+    }
+
+    free(L);
+    free(R);
+}
+
+// Merge sort function
+void* merge_sort(void* arg)
+{
+    thread_data* data = (thread_data*)arg;
+
+    int left = data->left;
+    int right = data->right;
+
+    if (left < right)
+    {
+        int mid = left + (right - left) / 2;
+
+        thread_data left_data = {
+            left, mid, data->thread_id
+        };
+
+        thread_data right_data = {
+            mid + 1, right, data->thread_id
+        };
+
+        // Create threads for left and right halves
+        pthread_t left_thread, right_thread;
+
+        pthread_create(&left_thread, NULL, merge_sort,
+                       (void*)&left_data);
+
+        pthread_create(&right_thread, NULL, merge_sort,
+                       (void*)&right_data);
+
+        pthread_join(left_thread, NULL);
+        pthread_join(right_thread, NULL);
+
+        // Merge the sorted halves
+        merge(left, mid, right);
+    }
+
+    return NULL;
+}
+
+int main()
+{
+    pthread_t threads[NUM_THREADS];
+
+    pthread_mutex_init(&mutex, NULL);
+
+    // Create thread for sorting the entire array
+    thread_data initial_data = {0, SIZE - 1, 0};
+
+    pthread_create(&threads[0], NULL, merge_sort,
+                   (void*)&initial_data);
+
+    // Wait for sorting thread to finish
+    pthread_join(threads[0], NULL);
+
+    // Print the sorted array
+    printf("Sorted Array:\n");
+
+    for (int i = 0; i < SIZE; i++)
+    {
+        printf("%d ", array[i]);
+    }
+
+    printf("\n");
+
+    pthread_mutex_destroy(&mutex);
+
+    return 0;
+}
 
 
-Step 2: Create a Shell Script
+Step 2: Compile the Program
 
-rit@rit:~/shell$ nano hello.sh
-
-Shell Script (hello.sh):
-
-#!/bin/bash
-
-echo "-----------------------------------------"
-echo " Welcome to Docker Offline Demo!"
-echo " This script is running inside a container."
-echo "----------------------------------------------"
+gcc -pthread -o merge_sort merge_sort.c
 
 
-Step 3: Create a Dockerfile
+Step 3: Execute the Program
 
-rit@rit:~/shell$ nano Dockerfile
-
-Dockerfile:
-
-FROM ubuntu:latest
-
-WORKDIR /app
-
-COPY hello.sh .
-
-# Give execute permission
-RUN chmod +x hello.sh
-
-# Run the script
-CMD ["./hello.sh"]
-
-
-Step 4: Create Docker Image
-
-rit@rit:~/shell$ docker build -t shell-demo .
-
-
-Step 5: Run Docker Container
-
-rit@rit:~/shell$ docker run -it shell-demo
+./merge_sort
 
 
 Output:
 
------------------------------------------
- Welcome to Docker Offline Demo!
- This script is running inside a container.
-----------------------------------------------
+Sorted Array:
+
+1 2 3 4 5 6 7 8 9 10 27 29 38 42 43 82
 
 
-rit@rit:~/shell$
+RESULT:
 
-
-Result:
-
-Successfully created and executed a custom shell script inside an Ubuntu Docker container.
+Successfully implemented and executed the Merge Sort algorithm using Pthreads to sort an array in ascending order.
